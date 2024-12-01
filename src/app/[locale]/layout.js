@@ -11,25 +11,23 @@ export function generateStaticParams() {
 }
 
 export default async function LocaleLayout({ children, params }) {
-
-  const { locale } = await params;  
+  const { locale } = params;
 
 
   if (!routing.locales.includes(locale)) {
     notFound();
   }
 
-
   setRequestLocale(locale);
-
 
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          <Navbar locale={locale} />
+   
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Navbar /> 
           {children}
         </NextIntlClientProvider>
       </body>

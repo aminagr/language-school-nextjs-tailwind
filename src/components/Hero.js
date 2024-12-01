@@ -64,9 +64,9 @@ export default function Hero() {
 
         <div className="md:w-1/2 lg:w-2/5">
           <img
-            src="/images/hero2.jpg"
+            src="/images/moscow.jpg"
             alt="Image illustrant le russe"
-            className="w-full h-auto max-w-md mx-auto md:max-w-full hero-image"
+            className="w-full h-auto max-w-md  mx-auto md:max-w-full hero-image"
           />
         </div>
       </div>

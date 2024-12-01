@@ -17,34 +17,28 @@ export default function MiniGallery() {
     { src: "/images/moscow.jpg", alt: "Image 1" },
   ];
 
-
   const openModal = (index) => {
     setActiveIndex(index);
     setIsModalOpen(true);
   };
 
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
 
   const goToNext = () => {
     setActiveIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  
   const goToPrev = () => {
-    setActiveIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length); 
+    setActiveIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
-
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       closeModal();
     }
   };
-
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -66,7 +60,6 @@ export default function MiniGallery() {
     };
   }, [isModalOpen]);
 
- 
   const displayedImages = [
     images[activeIndex],
     images[(activeIndex + 1) % images.length],
@@ -79,19 +72,32 @@ export default function MiniGallery() {
         <h2 className="text-3xl font-extrabold text-gray-800">Galerie d'images</h2>
       </div>
 
-     
       <div className="relative flex justify-center items-center space-x-4">
-        {displayedImages.map((image, index) => (
-          <div key={index} className="group relative cursor-pointer">
+        {/* Affiche 1 image sur mobile, 3 images sur desktop/tablette */}
+        <div className="hidden md:flex space-x-4">
+          {displayedImages.map((image, index) => (
+            <div key={index} className="group relative cursor-pointer">
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-64 object-cover rounded-lg shadow-lg transform group-hover:scale-105 transition-all"
+                onClick={() => openModal(activeIndex + index)}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Affiche une seule image sur mobile */}
+        <div className="md:hidden">
+          <div className="group relative cursor-pointer">
             <img
-              src={image.src}
-              alt={image.alt}
+              src={displayedImages[0].src}
+              alt={displayedImages[0].alt}
               className="w-full h-64 object-cover rounded-lg shadow-lg transform group-hover:scale-105 transition-all"
-              onClick={() => openModal(activeIndex + index)} 
+              onClick={() => openModal(activeIndex)}
             />
           </div>
-        ))}
-
+        </div>
 
         <button
           onClick={goToPrev}
@@ -107,28 +113,26 @@ export default function MiniGallery() {
         </button>
       </div>
 
-<div className="flex flex-wrap justify-center mt-6 space-x-4 space-y-4">
-  {images.map((image, index) => (
-    <div
-      key={index}
-      className={`cursor-pointer border-2 ${activeIndex === index ? "border-black" : "border-transparent"}`} 
-      onClick={() => openModal(index)}
-    >
-      <img
-        src={image.src}
-        alt={image.alt}
-        className="w-24 h-24 object-cover rounded-lg transition-all" 
-      />
-    </div>
-  ))}
-</div>
+      <div className="flex flex-wrap justify-center mt-6 space-x-4 space-y-4">
+        {images.map((image, index) => (
+          <div
+            key={index}
+            className={`cursor-pointer border-2 ${activeIndex === index ? "border-black" : "border-transparent"}`}
+            onClick={() => openModal(index)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-24 h-24 object-cover rounded-lg transition-all"
+            />
+          </div>
+        ))}
+      </div>
 
-
-  
       {isModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50"
-          onClick={handleOverlayClick} 
+          onClick={handleOverlayClick}
         >
           <div className="relative max-w-5xl w-full p-4" onClick={(e) => e.stopPropagation()}>
             <button
