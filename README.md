@@ -12,6 +12,12 @@ A modern, responsive website for a Russian language school built with **Next.js*
 - **Server-Side Rendering (SSR)**: Full support for SSR and Static Site Generation (SSG).
 
 ## 📸 Screenshots:
+![image](https://github.com/user-attachments/assets/f29a2f41-9d74-4942-972b-44ccb80f1ec8)
+![image](https://github.com/user-attachments/assets/d3045fc8-94af-4ec8-ae55-816ca084772e)
+![image](https://github.com/user-attachments/assets/a013e93e-10c8-44bd-bc68-1cc3b33c1ccf)
+![image](https://github.com/user-attachments/assets/00a422f7-39c6-47ac-bd3b-78e6268562b7)
+![image](https://github.com/user-attachments/assets/771cc532-196b-4c4a-aff3-e7d6addfa72f)
+![image](https://github.com/user-attachments/assets/e4a4658e-5e8f-46d5-b344-8dcaca459383)
 
 ## ⚙️ Setup Instructions
 
