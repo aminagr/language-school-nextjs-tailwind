@@ -1,21 +1,27 @@
 import SignupForm from '@/components/SignupForm';
 import Link from 'next/link';
-import { useLocale } from 'next-intl'; // Importer useLocale
+import { useLocale } from 'next-intl'; 
 
 const SignupPage = () => {
-  const locale = useLocale(); // Utiliser useLocale pour obtenir la langue courante
+  const locale = useLocale();
 
   return (
-    <div className="h-screen flex justify-center items-center bg-gray-100 px-4">
-      <div className="w-full md:w-[900px] h-auto md:h-[600px] flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4 py-8">
+      <div className="w-full md:w-[1100px] flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden">
         
+   
         <div className="w-full md:w-1/2 bg-custom-blue text-white flex flex-col justify-center items-center p-6">
           <SignupForm />
         </div>
 
+
         <div className="w-full md:w-1/2 bg-white text-custom-blue flex flex-col justify-center items-center p-6 md:p-8">
-          <div className="w-full hidden md:block">
-            <img src="/images/hero.jpg" alt="Sign Up" />
+          <div className="w-full hidden md:block mb-4">
+            <img 
+              src="/images/hero.jpg" 
+              alt="Sign Up" 
+              
+            />
           </div>
           <div className="flex flex-col justify-center items-center h-full mb-4">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">

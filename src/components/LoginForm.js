@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; 
 import { useLocale } from "next-intl";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import Link from 'next/link';
 
 const LoginForm = () => {
+  const router = useRouter(); 
   const locale = useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,10 +18,47 @@ const LoginForm = () => {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
+  const validateForm = () => {
+    if (!email || !password) {
+      setError("Tous les champs sont obligatoires.");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Veuillez entrer une adresse email valide.");
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+
+    if (!validateForm()) return;
+
+   
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+   
+  
+      setEmail("");
+      setPassword("");
+      setRememberMe(false);
+
+     
+      router.push(`/${locale}/dashboard`);
+    }, 2000);
+  };
+
   return (
     <div className="w-3/4">
       <h1 className="text-4xl font-bold text-custom-blue mb-8 text-center">Bienvenue !</h1>
-      <form className="login-form space-y-4">
+      <form className="login-form space-y-4" onSubmit={handleSubmit}>
         <div className="relative">
           <FaEnvelope className="absolute left-2 top-3 text-gray-400" />
           <input
@@ -62,6 +101,7 @@ const LoginForm = () => {
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <button
+          type="submit"
           className="w-full py-2 bg-custom-blue text-white text-lg font-bold uppercase rounded-full hover:bg-custom-blue-dark"
           disabled={loading}
         >
