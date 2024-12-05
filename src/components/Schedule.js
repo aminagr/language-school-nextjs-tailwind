@@ -106,7 +106,7 @@ export default function Schedule() {
             <option value="">Tous les niveaux</option>
             {levels.map((level) => (
               <option key={level} value={level}>
-                Niveau {level}
+                 {level}
               </option>
             ))}
           </select>
