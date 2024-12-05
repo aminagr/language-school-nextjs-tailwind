@@ -81,7 +81,7 @@ const Groups = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
         <input
           type="text"
           placeholder="Rechercher un groupe..."
@@ -90,13 +90,13 @@ const Groups = () => {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="p-2 border border-gray-300 rounded-lg w-1/3"
+        className="p-2 border border-gray-300 rounded-lg w-full sm:w-2/5"
         />
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
           <select
             value={selectedSession}
             onChange={handleSessionChange}
-            className="p-2 border border-gray-300 rounded-lg w-1/3"
+             className="p-2 border border-gray-300 rounded-lg w-full sm:w-full"
           >
             <option value="">Toutes les sessions</option>
             {fetchSessionsData().map((session) => (
@@ -108,7 +108,7 @@ const Groups = () => {
           <select
             value={selectedLevel}
             onChange={handleLevelChange}
-            className="p-2 border border-gray-300 rounded-lg w-1/3"
+            className="p-2 border border-gray-300 rounded-lg w-full sm:w-full"
           >
             <option value="">Tous les niveaux</option>
             {fetchLevelsData().map((level) => (
