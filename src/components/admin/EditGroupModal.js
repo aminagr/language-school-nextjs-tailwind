@@ -1,163 +1,227 @@
 import React, { useState, useEffect } from 'react';
-import { fetchLevelsData, fetchRoomsData, fetchSessionsData } from '@/utils';
+import { fetchSessionsData, fetchLevelsData, fetchRoomsData } from '@/utils/index';
+import { FaTimes, FaSave } from 'react-icons/fa';
 
-const EditGroupModal = ({ group, onSave, onClose }) => {
-  const [groupName, setGroupName] = useState('');
-  const [level, setLevel] = useState('');
-  const [roomName, setRoomName] = useState('');
-  const [sessionsPerWeek, setSessionsPerWeek] = useState(1);
+const EditGroupModal = ({ group, onClose, onSave }) => {
+  const [groupData, setGroupData] = useState({ ...group });
   const [sessions, setSessions] = useState([]);
-  const [sessionName, setSessionName] = useState('');
-
-  const levels = fetchLevelsData();
-  const rooms = fetchRoomsData();
-  const sessionsData = fetchSessionsData();
+  const [levels, setLevels] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Initialize the state with the group data passed as prop
-    if (group) {
-      setGroupName(group.group_name);
-      setLevel(group.level);
-      setRoomName(group.room_name);
-      setSessionsPerWeek(group.sessions_per_week);
-      setSessions(group.sessions || []);
-      setSessionName(group.session_name);
+    setLevels(fetchLevelsData());
+    setRooms(fetchRoomsData());
+    setSessions(fetchSessionsData());
+  }, []);
+
+  const handleSessionChange = (e, index, field) => {
+    const updatedSessions = [...groupData.sessions];
+    updatedSessions[index][field] = e.target.value;
+    setGroupData({ ...groupData, sessions: updatedSessions });
+  };
+
+  const handleDaysChange = (e, index) => {
+    const updatedSessions = [...groupData.sessions];
+    updatedSessions[index].day = e.target.value;  
+    setGroupData({ ...groupData, sessions: updatedSessions });
+  };
+  
+
+  const handleSessionsCountChange = (e) => {
+    const value = e.target.value;
+    const newSessionsCount = parseInt(value);
+  
+    if (isNaN(newSessionsCount) || newSessionsCount <= 0) {
+      setErrors({
+        ...errors,
+        sessions_per_week: "Le nombre de séances doit être un nombre valide et positif.",
+      });
+      return;
     }
-  }, [group]);
+  
+    const updatedSessions = [...groupData.sessions];
+    if (newSessionsCount > groupData.sessions.length) {
+      while (updatedSessions.length < newSessionsCount) {
+        updatedSessions.push({
+          day: 'Lundi',        // Valeur par défaut
+          start_time: '08:00',      // Valeur par défaut
+          end_time: '10:00',        // Valeur par défaut
+          room_name: 'Salle 1', // Valeur par défaut
+        });
+      }
+    } else if (newSessionsCount < groupData.sessions.length) {
+      updatedSessions.length = newSessionsCount;
+    }
+  
+    setGroupData({
+      ...groupData,
+      sessions_per_week: newSessionsCount,
+      sessions: updatedSessions,
+    });
+  
+    setErrors({
+      ...errors,
+      sessions_per_week: '',
+    });
+  };
+  
 
-  useEffect(() => {
-    // Update sessions whenever sessionsPerWeek changes
-    const newSessions = Array.from({ length: sessionsPerWeek }, (_, index) => ({
-      ...sessions[index], // retain existing session data
-      day: sessions[index]?.day || '',
-      start_time: sessions[index]?.start_time || '',
-      end_time: sessions[index]?.end_time || '',
-    }));
-    setSessions(newSessions);
-  }, [sessionsPerWeek]);
+  const validateForm = () => {
+    const newErrors = {};
+    if (!groupData.group_name) newErrors.group_name = "Le nom du groupe est requis.";
+    if (!groupData.session_name) newErrors.session_name = "La session est requise.";
+    if (!groupData.level) newErrors.level = "Le niveau est requis.";
+    if (isNaN(groupData.sessions_per_week) || groupData.sessions_per_week <= 0) {
+      newErrors.sessions_per_week = "Le nombre de séances par semaine doit être un nombre valide et positif.";
+    }
 
-  const handleSessionChange = (index, field, value) => {
-    const updatedSessions = [...sessions];
-    updatedSessions[index][field] = value;
-    setSessions(updatedSessions);
+    groupData.sessions.forEach((session, index) => {
+      if (!session.day) newErrors[`session_day_${index}`] = "Le jour est requis.";
+      if (!session.start_time) newErrors[`session_start_time_${index}`] = "L'heure de début est requise.";
+      if (!session.end_time) newErrors[`session_end_time_${index}`] = "L'heure de fin est requise.";
+      if (!session.room_name) newErrors[`session_room_${index}`] = "La salle est requise.";
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = () => {
-    if (!groupName || !level || !roomName || sessions.length === 0 || !sessionName) return;
-
-    const selectedLevel = levels.find(lvl => lvl.id === parseInt(level));
-    const selectedRoom = rooms.find(room => room.id === parseInt(roomName));
-    const selectedSession = sessionsData.find(session => session.session_name === sessionName);
-
-    onSave({
-      id: group.id, // Retain the original group ID for updates
-      group_name: groupName,
-      level: selectedLevel ? selectedLevel.name : '',
-      room_name: selectedRoom ? selectedRoom.name : '',
-      sessions_per_week: sessionsPerWeek,
-      sessions,
-      session_name: selectedSession ? selectedSession.session_name : '',
-    });
+    if (validateForm()) {
+      onSave(groupData);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-2xl mb-4">Modifier un groupe</h2>
-        <input
-          type="text"
-          placeholder="Nom du groupe"
-          value={groupName}
-          onChange={(e) => setGroupName(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg mb-4 w-full"
-        />
-       <select
-  value={level} // Utilisation de level directement
-  onChange={(e) => setLevel(e.target.value)}
-  className="p-2 border border-gray-300 rounded-lg mb-4 w-full"
->
-<option value="">Sélectionner un niveau</option>
-  {levels.map((lvl) => (
-    <option key={lvl.id} value={lvl.name}>{lvl.name}</option>
-  ))}
-</select>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full overflow-y-auto max-h-[80vh]">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800">Modifier le groupe {groupData.group_name}</h2>
+          <button
+            className="text-gray-500 hover:text-gray-800"
+            onClick={onClose}
+          >
+            <FaTimes size={20} />
+          </button>
+        </div>
 
-<select
-  value={roomName}
-  onChange={(e) => setRoomName(e.target.value)}
-  className="p-2 border border-gray-300 rounded-lg mb-4 w-full"
->
-  <option value="">Sélectionner une salle</option>
-  {rooms.map((room) => (
-    <option key={room.id} value={room.name}>{room.name}</option>
-  ))}
-</select>
-        <select
-          value={sessionName}
-          onChange={(e) => setSessionName(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg mb-4 w-full"
-        >
-          <option value="">Sélectionner une session</option>
-          {sessionsData.map((session) => (
-            <option key={session.id} value={session.session_name}>
-              {session.session_name}
-            </option>
-          ))}
-        </select>
-        <div>
-          <label className="block mb-2">Nombre de séances par semaine :</label>
+        <div className="space-y-4">
+          <label className="block text-gray-700">Nom du groupe</label>
+          <input
+            type="text"
+            value={groupData.group_name}
+            onChange={(e) => setGroupData({ ...groupData, group_name: e.target.value })}
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.group_name && <p className="text-red-500 text-sm">{errors.group_name}</p>}
+
+          <label className="block text-gray-700">Session</label>
+          <select
+            value={groupData.session_name}
+            onChange={(e) => setGroupData({ ...groupData, session_name: e.target.value })}
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {sessions.map((session) => (
+              <option key={session.id} value={session.session_name}>
+                {session.session_name}
+              </option>
+            ))}
+          </select>
+          {errors.session_name && <p className="text-red-500 text-sm">{errors.session_name}</p>}
+
+          <label className="block text-gray-700">Niveau</label>
+          <select
+            value={groupData.level}
+            onChange={(e) => setGroupData({ ...groupData, level: e.target.value })}
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {levels.map((level) => (
+              <option key={level.id} value={level.name}>
+                {level.name}
+              </option>
+            ))}
+          </select>
+          {errors.level && <p className="text-red-500 text-sm">{errors.level}</p>}
+
+          <label className="block text-gray-700">Séances par semaine</label>
           <input
             type="number"
-            min="1"
-            value={sessionsPerWeek}
-            onChange={(e) => setSessionsPerWeek(Number(e.target.value))}
-            className="p-2 border border-gray-300 rounded-lg w-full"
+            value={groupData.sessions_per_week}
+            onChange={handleSessionsCountChange}
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </div>
-        <div className="mt-4">
-  {sessions.map((session, index) => (
-    <div key={index} className="mt-4">
-      <select
-        value={session.day}
-        onChange={(e) => handleSessionChange(index, 'day', e.target.value)}
-        className="p-2 border border-gray-300 rounded-lg w-full"
-      >
-        <option value="">Jour</option>
-        {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'].map((day) => (
-          <option key={day} value={day}>{day}</option>
-        ))}
-      </select>
-      
-      <div className="flex space-x-2 mt-2">
-        <input
-          type="time"
-          value={session.start_time}
-          onChange={(e) => handleSessionChange(index, 'start_time', e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg"
-        />
-        <input
-          type="time"
-          value={session.end_time}
-          onChange={(e) => handleSessionChange(index, 'end_time', e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg"
-        />
-      </div>
-    </div>
-  ))}
-</div>
+          {errors.sessions_per_week && <p className="text-red-500 text-sm">{errors.sessions_per_week}</p>}
 
-        <div className="mt-4 flex justify-between">
-          <button
-            onClick={onClose}
-            className="p-2 bg-gray-500 text-white rounded-lg"
-          >
-            Annuler
-          </button>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Séances</h3>
+            {groupData.sessions.map((session, index) => (
+              <div key={index} className="space-y-4">
+                <label className="block text-gray-700">Jour</label>
+                <select
+  value={session.day}
+  onChange={(e) => handleDaysChange(e, index)}
+  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map((day) => (
+    <option key={day} value={day}>
+      {day}
+    </option>
+  ))}
+</select>
+
+                {errors[`session_day_${index}`] && <p className="text-red-500 text-sm">{errors[`session_day_${index}`]}</p>}
+
+                <label className="block text-gray-700">Heure de début</label>
+                <input
+                  type="time"
+                  value={session.start_time}
+                  onChange={(e) => handleSessionChange(e, index, 'start_time')}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors[`session_start_time_${index}`] && <p className="text-red-500 text-sm">{errors[`session_start_time_${index}`]}</p>}
+
+                <label className="block text-gray-700">Heure de fin</label>
+                <input
+                  type="time"
+                  value={session.end_time}
+                  onChange={(e) => handleSessionChange(e, index, 'end_time')}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors[`session_end_time_${index}`] && <p className="text-red-500 text-sm">{errors[`session_end_time_${index}`]}</p>}
+
+                <label className="block text-gray-700">Salle</label>
+                <select
+                  value={session.room_name}
+                  onChange={(e) => handleSessionChange(e, index, 'room_name')}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.name}>
+                      {room.name}
+                    </option>
+                  ))}
+                </select>
+                {errors[`session_room_${index}`] && <p className="text-red-500 text-sm">{errors[`session_room_${index}`]}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end">
           <button
             onClick={handleSubmit}
-            className="p-2 bg-blue-500 text-white rounded-lg"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 focus:outline-none"
           >
-            Enregistrer
+            <FaSave />
+            <span>Enregistrer</span>
+          </button>
+          <button
+        onClick={onClose}
+            className="bg-red-600 text-white px-6 py-2 rounded-lg flex items-center space-x-2 hover:bg-red-700 focus:outline-none"
+          >
+            <FaTimes />
+            <span>Quitter</span>
           </button>
         </div>
       </div>

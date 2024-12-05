@@ -17,18 +17,18 @@ const AddGroupModal = ({ onSave, onClose }) => {
       day: 'Lundi',
       start_time: '08:00',
       end_time: '10:00',
-      room: '1', // Room 1 by default
+      room: '1', 
     }));
     setSessions(newSessions);
   }, [sessionsPerWeek]);
 
   useEffect(() => {
     if (levels.length > 0) {
-      setLevel(levels[0].id); // Set default level to the first level
+      setLevel(levels[0].id); 
     }
 
     if (sessionsData.length > 0) {
-      setSessionName(sessionsData[0].session_name); // Set default session to the first session
+      setSessionName(sessionsData[0].session_name); 
     }
   }, [levels, sessionsData]);
 
@@ -60,7 +60,7 @@ const AddGroupModal = ({ onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto">
         <h2 className="text-2xl mb-4">Ajouter un groupe</h2>
         <input
           type="text"
