@@ -165,15 +165,16 @@ const Groups = () => {
                   >
                     <FaEdit />
                   </button>
-                  <button
-                    onClick={() => {
-                      setDeleteData(group);
-                      setIsDeleteModalOpen(true);
-                    }}
-                    className="p-2 text-red-500 hover:text-red-700"
-                  >
-                    <FaTrash />
-                  </button>
+                <button
+                onClick={() => {
+                  setDeleteData(group);
+                  setIsDeleteModalOpen(true);
+                }}
+                className="p-2 text-red-500 hover:text-red-700"
+              >
+                <FaTrash />
+              </button>
+
                 </td>
               </tr>
             ))}
@@ -214,13 +215,13 @@ const Groups = () => {
           onSave={handleUpdateGroup}
         />
       )}
-      {isDeleteModalOpen && deleteData && (
-        <DeleteGroupModal
-          group={deleteData}
-          onClose={() => setIsDeleteModalOpen(false)}
-          onDelete={handleDeleteGroup}
-        />
-      )}
+    {isDeleteModalOpen && deleteData && (
+  <DeleteGroupModal
+    groupName={deleteData.group_name}  
+    onClose={() => setIsDeleteModalOpen(false)}
+    onDelete={() => handleDeleteGroup(deleteData.id)}  
+  />
+)}
     </div>
   );
 };
