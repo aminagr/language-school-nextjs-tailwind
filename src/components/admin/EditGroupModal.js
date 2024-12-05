@@ -44,10 +44,10 @@ const EditGroupModal = ({ group, onClose, onSave }) => {
     if (newSessionsCount > groupData.sessions.length) {
       while (updatedSessions.length < newSessionsCount) {
         updatedSessions.push({
-          day: 'Lundi',        // Valeur par défaut
-          start_time: '08:00',      // Valeur par défaut
-          end_time: '10:00',        // Valeur par défaut
-          room_name: 'Salle 1', // Valeur par défaut
+          day: 'Lundi',       
+          start_time: '08:00',      
+          end_time: '10:00',        
+          room_name: 'Salle 1', 
         });
       }
     } else if (newSessionsCount < groupData.sessions.length) {

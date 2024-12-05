@@ -3,16 +3,16 @@ import { fetchLevelsData, fetchRoomsData, fetchSessionsData } from '@/utils';
 
 const AddGroupModal = ({ onSave, onClose }) => {
   const [groupName, setGroupName] = useState('');
-  const [level, setLevel] = useState('');  // Valeur par défaut vide
+  const [level, setLevel] = useState('');  
   const [sessionsPerWeek, setSessionsPerWeek] = useState(1);
   const [sessions, setSessions] = useState([]);
-  const [sessionName, setSessionName] = useState('');  // Valeur par défaut vide
+  const [sessionName, setSessionName] = useState(''); 
 
   const levels = fetchLevelsData();
   const rooms = fetchRoomsData();
   const sessionsData = fetchSessionsData();
 
-  // Set default sessions based on sessionsPerWeek
+
   useEffect(() => {
     const newSessions = Array.from({ length: sessionsPerWeek }, () => ({
       day: 'Lundi',
@@ -23,14 +23,14 @@ const AddGroupModal = ({ onSave, onClose }) => {
     setSessions(newSessions);
   }, [sessionsPerWeek]);
 
-  // Only set default values once the levels and sessionsData are available
+  
   useEffect(() => {
     if (levels.length > 0 && !level) {
-      setLevel(levels[0].id); // Valeur par défaut si non définie
+      setLevel(levels[0].id);
     }
 
     if (sessionsData.length > 0 && !sessionName) {
-      setSessionName(sessionsData[sessionsData.length - 1].session_name); // Dernière session
+      setSessionName(sessionsData[sessionsData.length - 1].session_name); 
     }
   }, [levels, sessionsData]);
 

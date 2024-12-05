@@ -14,18 +14,18 @@ const Groups = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedSession, setSelectedSession] = useState('');  // État pour gérer la session sélectionnée
-  const [selectedLevel, setSelectedLevel] = useState(''); // État pour gérer le niveau sélectionné
+  const [selectedSession, setSelectedSession] = useState(''); 
+  const [selectedLevel, setSelectedLevel] = useState(''); 
   const itemsPerPage = 10;
 
-  // Récupération des groupes, des sessions et des niveaux
+
   useEffect(() => {
     const fetchedGroups = fetchGroups(); 
     setGroups(fetchedGroups);
 
     const sessions = fetchSessionsData();
     if (sessions.length > 0) {
-      setSelectedSession(sessions[sessions.length - 1].session_name); // Sélectionner la dernière session par défaut
+      setSelectedSession(sessions[sessions.length - 1].session_name); 
     }
   }, []);
 
@@ -48,12 +48,24 @@ const Groups = () => {
     setDeleteData(null);
   };
 
-  // Filtrer les groupes selon la session et le niveau
-  const filteredGroups = groups.filter((group) =>
+
+const filteredGroups = groups.filter((group) => {
+  const matchesGroupName = group.group_name.toLowerCase().includes(searchTerm.toLowerCase());
+  
+  const matchesSession = group.sessions.some((session) =>
+    session.day.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    session.start_time.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    session.end_time.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    session.room_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
     (selectedSession ? group.session_name === selectedSession : true) &&
     (selectedLevel ? group.level === selectedLevel : true) &&
-    group.group_name.toLowerCase().includes(searchTerm.toLowerCase())
+    (matchesGroupName || matchesSession)
   );
+});
+
 
   const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
   const currentGroups = filteredGroups.slice(
@@ -70,13 +82,13 @@ const Groups = () => {
   };
 
   const handleSessionChange = (e) => {
-    setSelectedSession(e.target.value);  // Mettre à jour la session sélectionnée
-    setCurrentPage(1);  // Réinitialiser la pagination lors du changement de session
+    setSelectedSession(e.target.value);  
+    setCurrentPage(1);  
   };
 
   const handleLevelChange = (e) => {
-    setSelectedLevel(e.target.value);  // Mettre à jour le niveau sélectionné
-    setCurrentPage(1);  // Réinitialiser la pagination lors du changement de niveau
+    setSelectedLevel(e.target.value);  
+    setCurrentPage(1);  
   };
 
   return (
