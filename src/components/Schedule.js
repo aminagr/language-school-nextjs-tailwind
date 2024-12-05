@@ -1,22 +1,35 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchGroups } from '@/utils'; // Assurez-vous que le chemin est correct
 
 export default function Schedule() {
   const [activeTab, setActiveTab] = useState("lundi");
+  const [scheduleData, setScheduleData] = useState([]);
 
+  useEffect(() => {
+    const groups = fetchGroups();
+    const formattedSchedule = formatScheduleData(groups);
+    setScheduleData(formattedSchedule);
+  }, []);
 
-  const scheduleData = [
-    { nom_jour: "lundi", creneau_horaire: "08:00 - 10:00", nom_salle: "Salle 1", nom_niveau: "Niveau 1", nom_groupe: "Groupe 1" },
-    { nom_jour: "lundi", creneau_horaire: "08:00 - 10:00", nom_salle: "Salle 2", nom_niveau: "Niveau 2", nom_groupe: "Groupe 1" },
-    { nom_jour: "lundi", creneau_horaire: "08:00 - 10:00", nom_salle: "Salle 3", nom_niveau: "Niveau 3", nom_groupe: "Groupe 1" },
-    { nom_jour: "lundi", creneau_horaire: "10:00 - 12:00", nom_salle: "Salle 1", nom_niveau: "Niveau 1", nom_groupe: "Groupe 2" },
-    { nom_jour: "lundi", creneau_horaire: "10:00 - 12:00", nom_salle: "Salle 2", nom_niveau: "Niveau 2", nom_groupe: "Groupe 2" },
-    { nom_jour: "mardi", creneau_horaire: "08:00 - 10:00", nom_salle: "Salle 2", nom_niveau: "Niveau 1", nom_groupe: "Groupe 3" },
-    { nom_jour: "mardi", creneau_horaire: "10:00 - 12:00", nom_salle: "Salle 3", nom_niveau: "Niveau 3", nom_groupe: "Groupe 2" },
-    { nom_jour: "mercredi", creneau_horaire: "08:00 - 10:00", nom_salle: "Salle 1", nom_niveau: "Niveau 1", nom_groupe: "Groupe F" },
-    { nom_jour: "mercredi", creneau_horaire: "10:00 - 12:00", nom_salle: "Salle 3", nom_niveau: "Niveau 3", nom_groupe: "Groupe 2" },
+  const formatScheduleData = (groups) => {
+    const formattedData = [];
 
-  ];
+    groups.forEach((group) => {
+      group.sessions.forEach((session) => {
+        const { day, start_time, end_time, room_name } = session;
+        formattedData.push({
+          nom_jour: day.toLowerCase(),
+          creneau_horaire: `${start_time} - ${end_time}`,
+          nom_salle: room_name,
+          nom_niveau: group.level,
+          nom_groupe: group.group_name,
+        });
+      });
+    });
+
+    return formattedData;
+  };
 
   const groupedData = scheduleData.reduce((acc, item) => {
     const { nom_jour, creneau_horaire, nom_salle, nom_niveau, nom_groupe } = item;
@@ -61,18 +74,22 @@ export default function Schedule() {
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-2 border-b text-lg font-semibold text-gray-700">Horaire</th>
-                {["Salle 1", "Salle 2", "Salle 3"].map((salle, index) => (
-                  <th key={index} className="px-4 py-2 border-b text-lg font-semibold text-gray-700">{salle}</th>
-                ))}
+                {/* Dynamic generation of room columns */}
+                {Object.values(groupedData[activeTab] || {}).flatMap(row => 
+                  Object.keys(row.salles).map((room, index) => (
+                    <th key={index} className="px-4 py-2 border-b text-lg font-semibold text-gray-700">{room}</th>
+                  ))
+                )}
               </tr>
             </thead>
             <tbody>
               {groupedData[activeTab]?.map((schedule, index) => (
                 <tr key={index}>
                   <td className="px-4 py-2 border-b text-gray-600">{schedule.creneau_horaire}</td>
-                  {["Salle 1", "Salle 2", "Salle 3"].map((salle, index) => (
+                  {/* Displaying the rooms and their associated groups */}
+                  {Object.keys(schedule.salles).map((room, index) => (
                     <td key={index} className="px-4 py-2 border-b text-gray-600">
-                      {schedule.salles[salle]?.map((group, idx) => (
+                      {schedule.salles[room]?.map((group, idx) => (
                         <div key={idx}>
                           {group.groupe} ({group.niveau})
                         </div>
