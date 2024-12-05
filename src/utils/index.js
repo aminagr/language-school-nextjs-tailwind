@@ -88,5 +88,35 @@ export const fetchGroups = () => {
       ],
       session_name: sessions.find(session => session.id === 3)?.session_name,
     },
+    {
+      id: 5,
+      group_name: 'Groupe E',
+      level: levels.find(level => level.id === 4)?.name,
+      sessions_per_week: 1,
+      sessions: [
+        { day: 'Lundi', start_time: '10:00', end_time: '12:00', room_name: rooms.find(room => room.id === 2)?.name },
+      ],
+      session_name: sessions.find(session => session.id === 3)?.session_name,
+    },
+    {
+      id: 6,
+      group_name: 'Groupe F',
+      level: levels.find(level => level.id === 3)?.name,
+      sessions_per_week: 1,
+      sessions: [
+        { day: 'Lundi', start_time: '14:00', end_time: '16:00', room_name: rooms.find(room => room.id === 1)?.name },
+      ],
+      session_name: sessions.find(session => session.id === 3)?.session_name,
+    },
+    {
+      id: 7,
+      group_name: 'Groupe l',
+      level: levels.find(level => level.id === 1)?.name,
+      sessions_per_week: 1,
+      sessions: [
+        { day: 'Lundi', start_time: '16:00', end_time: '18:00', room_name: rooms.find(room => room.id === 3)?.name },
+      ],
+      session_name: sessions.find(session => session.id === 3)?.session_name,
+    },
   ];
 };
