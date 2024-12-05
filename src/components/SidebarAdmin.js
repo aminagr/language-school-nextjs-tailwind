@@ -5,18 +5,15 @@ import {
   FaTachometerAlt,
   FaBuilding,
   FaLayerGroup,
-  FaUser,
-  FaClipboardList,
-  FaBell,
-  FaSignOutAlt,
+  FaUserGraduate,
   FaUsers,
-  FaChalkboard,
+  FaClipboardList,
   FaCogs,
-  FaKey,
+  FaUsersCog,
   FaBars,
   FaCalendarAlt,
-  FaUsersCog,
-  FaUserGraduate
+  FaSignOutAlt,
+  FaChevronDown,
 } from "react-icons/fa";
 import { useLocale } from "next-intl";
 
@@ -58,13 +55,14 @@ const SidebarAdmin = () => {
 
   return (
     <>
-  
       {!isOpen && (
-        <button onClick={toggleSidebar} className="md:hidden fixed top-4 left-4 z-30">
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden fixed top-4 left-4 z-30"
+        >
           <FaBars className="text-indigo-600 text-3xl" />
         </button>
       )}
-
 
       {isOpen && (
         <div
@@ -73,84 +71,134 @@ const SidebarAdmin = () => {
         />
       )}
 
-
       <div
         id="sidebar"
         className={`h-screen w-64 bg-gray-800 text-white p-6 transition-transform
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0 md:relative absolute top-0 left-0 z-20 md:block`}
       >
-      
         <div className="flex justify-center items-center mb-10">
-          <Link href={`/${locale}/admin`} className="flex items-center text-3xl font-semibold text-white hover:bg-gray-700 p-2 rounded-lg">
+          <Link
+            href={`/${locale}/admin`}
+            className="flex items-center text-3xl font-semibold text-white hover:bg-gray-700 p-2 rounded-lg"
+          >
             <FaTachometerAlt className="mr-3" />
             Dashboard
           </Link>
         </div>
 
-  
         <ul className="space-y-6">
-
-        <li>
-            <Link href={`/${locale}/admin/rooms`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
+          <li>
+            <Link
+              href={`/${locale}/admin/rooms`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+            >
               <FaBuilding className="mr-3 text-xl" />
               <span className="text-lg">Salles</span>
             </Link>
           </li>
-
           <li>
-            <Link href={`/${locale}/admin/levels`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
+            <Link
+              href={`/${locale}/admin/levels`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+            >
               <FaLayerGroup className="mr-3 text-xl" />
               <span className="text-lg">Niveaux</span>
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/admin/sessions`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
+            <Link
+              href={`/${locale}/admin/sessions`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+            >
               <FaCalendarAlt className="mr-3 text-xl" />
               <span className="text-lg">Sessions</span>
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/admin/groups`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
+            <Link
+              href={`/${locale}/admin/groups`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+            >
               <FaUsers className="mr-3 text-xl" />
               <span className="text-lg">Groupes</span>
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/admin/registrations`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
+            <Link
+              href={`/${locale}/admin/registrations`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+            >
               <FaClipboardList className="mr-3 text-xl" />
               <span className="text-lg">Inscriptions</span>
             </Link>
           </li>
-        
-          <li>
-            <Link href={`/${locale}/admin/students`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
-              <FaUserGraduate className="mr-3 text-xl" />
-              <span className="text-lg">Etudiants</span>
-            </Link>
+          <li className="group relative">
+            <div className="flex items-center justify-between py-2 px-4 rounded-lg hover:bg-gray-700 cursor-pointer transition-all">
+              <div className="flex items-center">
+                <FaUserGraduate className="mr-3 text-xl" />
+                <span className="text-lg">Étudiants</span>
+              </div>
+              <FaChevronDown className="text-sm group-hover:rotate-180 transition-transform duration-300" />
+            </div>
+            <ul
+              className="absolute left-64 top-0 bg-gray-700 rounded-lg shadow-md opacity-0 group-hover:opacity-100 group-hover:translate-x-0
+              transition-all duration-300 transform -translate-x-4 space-y-2 py-4 px-6 w-48"
+            >
+              <li>
+                <Link
+                  href={`/${locale}/admin/students/registered`}
+                  className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
+                >
+                  Étudiants inscrits
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${locale}/admin/students/confirmed`}
+                  className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
+                >
+                  Étudiants confirmés
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${locale}/admin/students/all`}
+                  className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
+                >
+                  Tous les étudiants
+                </Link>
+              </li>
+            </ul>
           </li>
-        
           <li>
-            <Link href={`/${locale}/admin/settings`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
+            <Link
+              href={`/${locale}/admin/settings`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+            >
               <FaCogs className="mr-3 text-xl" />
               <span className="text-lg">Paramètres</span>
             </Link>
           </li>
           <li>
-            <Link href={`/${locale}/admin/admins`} className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all">
+            <Link
+              href={`/${locale}/admin/admins`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+            >
               <FaUsersCog className="mr-3 text-xl" />
               <span className="text-lg">Admins</span>
             </Link>
           </li>
         </ul>
 
-    
         <div className="my-8 border-t border-gray-600"></div>
 
-   
         <ul>
           <li>
-            <button onClick={handleLogoutClick} className="flex items-center py-2 px-4 rounded-lg hover:bg-red-600 transition-all">
+            <button
+              onClick={handleLogoutClick}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-red-600 transition-all"
+            >
               <FaSignOutAlt className="mr-3 text-xl" />
               <span className="text-lg">Se déconnecter</span>
             </button>
@@ -158,15 +206,22 @@ const SidebarAdmin = () => {
         </ul>
       </div>
 
-
       {showConfirmation && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 z-30 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-            <h3 className="text-xl mb-4">Êtes-vous sûr de vouloir vous déconnecter ?</h3>
-            <button onClick={handleConfirmLogout} className="bg-red-600 text-white py-2 px-4 rounded-lg mr-2">
+            <h3 className="text-xl mb-4">
+              Êtes-vous sûr de vouloir vous déconnecter ?
+            </h3>
+            <button
+              onClick={handleConfirmLogout}
+              className="bg-red-600 text-white py-2 px-4 rounded-lg mr-2"
+            >
               Oui
             </button>
-            <button onClick={handleCancel} className="bg-gray-600 text-white py-2 px-4 rounded-lg">
+            <button
+              onClick={handleCancel}
+              className="bg-gray-600 text-white py-2 px-4 rounded-lg"
+            >
               Non
             </button>
           </div>

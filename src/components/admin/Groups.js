@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';  
 import { FaPlus, FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import AddGroupModal from '@/components/admin/AddGroupModal';
 import EditGroupModal from '@/components/admin/EditGroupModal';
@@ -80,7 +80,6 @@ const Groups = () => {
         </button>
       </div>
 
-     
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-200">
           <thead className="bg-gray-100">
@@ -89,10 +88,8 @@ const Groups = () => {
               <th className="px-4 py-2 border">Nom du groupe</th>
               <th className="px-4 py-2 border">Nom de la session</th>
               <th className="px-4 py-2 border">Niveau</th>
-              <th className="px-4 py-2 border">Salle</th>
               <th className="px-4 py-2 border">Séances par semaine</th>
               <th className="px-4 py-2 border">Séances</th>
-              
               <th className="px-4 py-2 border">Actions</th>
             </tr>
           </thead>
@@ -103,16 +100,15 @@ const Groups = () => {
                 <td className="px-4 py-2 border">{group.group_name}</td>
                 <td className="px-4 py-2 border">{group.session_name}</td>
                 <td className="px-4 py-2 border">{group.level}</td>
-                <td className="px-4 py-2 border">{group.room_name}</td>
                 <td className="px-4 py-2 border">{group.sessions_per_week}</td>
                 <td className="px-4 py-2 border">
                   {group.sessions.map((session, index) => (
                     <div key={index}>
-                      <p>{session.day} - {session.start_time} à {session.end_time}</p>
+               <p>{session.day} - {session.start_time} à {session.end_time} - {session.room_name}</p>
+
                     </div>
                   ))}
                 </td>
-               
                 <td className="px-4 py-2 border flex space-x-2">
                   <button
                     onClick={() => {

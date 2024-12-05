@@ -1,11 +1,9 @@
-// src/components/admin/AddGroupModal.js
 import React, { useState, useEffect } from 'react';
 import { fetchLevelsData, fetchRoomsData, fetchSessionsData } from '@/utils';
 
 const AddGroupModal = ({ onSave, onClose }) => {
   const [groupName, setGroupName] = useState('');
   const [level, setLevel] = useState('');
-  const [roomName, setRoomName] = useState('');
   const [sessionsPerWeek, setSessionsPerWeek] = useState(1);
   const [sessions, setSessions] = useState([]);
   const [sessionName, setSessionName] = useState('');
@@ -16,12 +14,23 @@ const AddGroupModal = ({ onSave, onClose }) => {
 
   useEffect(() => {
     const newSessions = Array.from({ length: sessionsPerWeek }, () => ({
-      day: '',
-      start_time: '',
-      end_time: '',
+      day: 'Lundi',
+      start_time: '08:00',
+      end_time: '10:00',
+      room: '1', // Room 1 by default
     }));
     setSessions(newSessions);
   }, [sessionsPerWeek]);
+
+  useEffect(() => {
+    if (levels.length > 0) {
+      setLevel(levels[0].id); // Set default level to the first level
+    }
+
+    if (sessionsData.length > 0) {
+      setSessionName(sessionsData[0].session_name); // Set default session to the first session
+    }
+  }, [levels, sessionsData]);
 
   const handleSessionChange = (index, field, value) => {
     const updatedSessions = [...sessions];
@@ -30,18 +39,21 @@ const AddGroupModal = ({ onSave, onClose }) => {
   };
 
   const handleSubmit = () => {
-    if (!groupName || !level || !roomName || sessions.length === 0 || !sessionName) return;
-
+    if (!groupName || !level || sessions.length === 0 || !sessionName) return;
+  
     const selectedLevel = levels.find(lvl => lvl.id === parseInt(level));
-    const selectedRoom = rooms.find(room => room.id === parseInt(roomName));
     const selectedSession = sessionsData.find(session => session.session_name === sessionName);
-
+  
+    const formattedSessions = sessions.map(session => ({
+      ...session,
+      room_name: rooms.find(room => room.id === parseInt(session.room))?.name, 
+    }));
+  
     onSave({
       group_name: groupName,
       level: selectedLevel ? selectedLevel.name : '',
-      room_name: selectedRoom ? selectedRoom.name : '',
       sessions_per_week: sessionsPerWeek,
-      sessions,
+      sessions: formattedSessions, 
       session_name: selectedSession ? selectedSession.session_name : '',
     });
   };
@@ -65,16 +77,6 @@ const AddGroupModal = ({ onSave, onClose }) => {
           <option value="">Sélectionner un niveau</option>
           {levels.map((lvl) => (
             <option key={lvl.id} value={lvl.id}>{lvl.name}</option>
-          ))}
-        </select>
-        <select
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg mb-4 w-full"
-        >
-          <option value="">Sélectionner une salle</option>
-          {rooms.map((room) => (
-            <option key={room.id} value={room.id}>{room.name}</option>
           ))}
         </select>
         <select
@@ -126,6 +128,16 @@ const AddGroupModal = ({ onSave, onClose }) => {
                   className="p-2 border border-gray-300 rounded-lg"
                 />
               </div>
+              <select
+                value={session.room}
+                onChange={(e) => handleSessionChange(index, 'room', e.target.value)}
+                className="p-2 border border-gray-300 rounded-lg w-full mt-2"
+              >
+                <option value="">Sélectionner une salle</option>
+                {rooms.map((room) => (
+                  <option key={room.id} value={room.id}>{room.name}</option>
+                ))}
+              </select>
             </div>
           ))}
         </div>

@@ -42,23 +42,23 @@ export const fetchGroups = () => {
     {
       id: 1,
       group_name: 'Groupe A',
-      level: levels.find(level => level.id === 1)?.name, // Associer le nom du niveau
-      room_name: rooms.find(room => room.id === 1)?.name, // Associer le nom de la salle
-      sessions_per_week: 1,
-      sessions: [{ day: 'Lundi', start_time: '08:00', end_time: '10:00' }],
-      session_name: sessions.find(session => session.id === 1)?.session_name, // Associer le nom de la session
+      level: levels.find(level => level.id === 1)?.name,
+      sessions_per_week: 2,
+      sessions: [
+        { day: 'Lundi', start_time: '08:00', end_time: '10:00', room_name: rooms.find(room => room.id === 1)?.name },
+        { day: 'Mardi', start_time: '12:00', end_time: '14:00', room_name: rooms.find(room => room.id === 3)?.name },
+      ],
+      session_name: sessions.find(session => session.id === 1)?.session_name,
     },
     {
       id: 2,
       group_name: 'Groupe B',
-      level: levels.find(level => level.id === 2)?.name, // Associer le nom du niveau
-      room_name: rooms.find(room => room.id === 2)?.name, // Associer le nom de la salle
-      sessions_per_week: 2,
+      level: levels.find(level => level.id === 2)?.name,
+      sessions_per_week: 1,
       sessions: [
-        { day: 'Mardi', start_time: '14:00', end_time: '16:00' },
-        { day: 'Jeudi', start_time: '14:00', end_time: '16:00' },
+        { day: 'Jeudi', start_time: '14:00', end_time: '16:00', room_name: rooms.find(room => room.id === 2)?.name },
       ],
-      session_name: sessions.find(session => session.id === 2)?.session_name, // Associer le nom de la session
+      session_name: sessions.find(session => session.id === 2)?.session_name,
     },
   ];
 };
