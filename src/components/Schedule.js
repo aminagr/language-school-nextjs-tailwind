@@ -1,6 +1,6 @@
-'use client';
+'use client'; 
 import { useState, useEffect } from "react";
-import { fetchGroups } from '@/utils'; // Assurez-vous que le chemin est correct
+import { fetchGroups, fetchSessionsData } from '@/utils';
 
 export default function Schedule() {
   const [activeTab, setActiveTab] = useState("lundi");
@@ -8,13 +8,23 @@ export default function Schedule() {
 
   useEffect(() => {
     const groups = fetchGroups();
-    const formattedSchedule = formatScheduleData(groups);
+    const latestSession = getLatestSession(); // Récupérer la dernière session
+    const filteredGroups = filterGroupsBySession(groups, latestSession.session_name); // Filtrer les groupes selon la session la plus récente
+    const formattedSchedule = formatScheduleData(filteredGroups);
     setScheduleData(formattedSchedule);
   }, []);
 
+  const getLatestSession = () => {
+    const sessions = fetchSessionsData();
+    return sessions.sort((a, b) => new Date(b.start_date) - new Date(a.start_date))[0];
+  };
+
+  const filterGroupsBySession = (groups, sessionName) => {
+    return groups.filter(group => group.session_name === sessionName);
+  };
+
   const formatScheduleData = (groups) => {
     const formattedData = [];
-
     groups.forEach((group) => {
       group.sessions.forEach((session) => {
         const { day, start_time, end_time, room_name } = session;
@@ -27,7 +37,6 @@ export default function Schedule() {
         });
       });
     });
-
     return formattedData;
   };
 
