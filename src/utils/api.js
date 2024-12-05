@@ -22,14 +22,14 @@ export const getSessions = () => {
     return {
       id: 1,
   
-      lastName: "Grine",
-      firstName: "Amina",
+      lastName: "Ramos",
+      firstName: "Federico",
       birthDate: "1995-06-15",
       birthPlace: "Alger, Algérie",
       address: "123, Rue de la Liberté, Alger, Algérie",
-      email: "amina.grine@example.com",
+      email: "ramos.federico@example.com",
       phone: "0661234567",
-      userType: "Étudiante", 
+      userType: "Étudiant", 
       registeredSessions: [1, 2],
       notifications: [
         {

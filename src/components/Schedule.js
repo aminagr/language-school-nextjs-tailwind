@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 import { useState, useEffect } from 'react';
 import { fetchGroups, fetchSessionsData } from '@/utils';
 
@@ -7,6 +7,7 @@ export default function Schedule() {
   const [selectedLevel, setSelectedLevel] = useState('');
   const [scheduleData, setScheduleData] = useState([]);
   const [levels, setLevels] = useState([]);
+  const [days, setDays] = useState([]);
 
   useEffect(() => {
     const groups = fetchGroups();
@@ -15,9 +16,13 @@ export default function Schedule() {
     const formattedSchedule = formatScheduleData(filteredGroups);
     setScheduleData(formattedSchedule);
 
-    // Extraire les niveaux uniques
-    const uniqueLevels = [...new Set(groups.map((group) => group.level))];
+    const uniqueLevels = [...new Set(groups.map((group) => group.level))].sort();
+
     setLevels(uniqueLevels);
+
+
+    const uniqueDays = [...new Set(groups.flatMap(group => group.sessions.map(session => session.day.toLowerCase())))];
+    setDays(uniqueDays);
   }, []);
 
   const getLatestSession = () => {
@@ -50,7 +55,6 @@ export default function Schedule() {
     ? scheduleData.filter((item) => item.nom_niveau === selectedLevel)
     : scheduleData;
 
-  // Regrouper les données par jour, créneau horaire et salle
   const groupedData = filteredScheduleData.reduce((acc, item) => {
     const { nom_jour, creneau_horaire, nom_salle, nom_niveau, nom_groupe } = item;
 
@@ -71,7 +75,6 @@ export default function Schedule() {
     return acc;
   }, {});
 
-  // Extraire toutes les salles uniques pour l'en-tête
   const allRoomsForActiveTab = Array.from(
     new Set(
       groupedData[activeTab]?.flatMap((schedule) => Object.keys(schedule.salles)) || []
@@ -79,18 +82,16 @@ export default function Schedule() {
   );
 
   return (
-    <div className="py-12 bg-white">
+    <div className="py-12">
       <div className="container mx-auto px-4 sm:px-8 md:px-10 lg:px-32 text-center">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-8">Emploi du Temps</h2>
 
-        <div className="flex justify-center mb-6 space-x-4">
-          {['lundi', 'mardi', 'mercredi', 'jeudi', 'samedi'].map((day) => (
+        <div className="flex flex-wrap justify-center mb-6 space-x-2 sm:space-x-4">
+          {days.map((day) => (
             <button
               key={day}
               onClick={() => setActiveTab(day)}
-              className={`px-6 py-2 text-lg font-medium ${
-                activeTab === day ? 'bg-custom-blue text-white' : 'bg-gray-200 text-gray-600'
-              } rounded-lg transition duration-300`}
+              className={`w-full sm:w-auto px-6 py-2 text-lg font-medium ${activeTab === day ? 'bg-custom-blue text-white' : 'bg-gray-200 text-gray-600'} rounded-lg transition duration-300 mb-2 sm:mb-0`}
             >
               {day.charAt(0).toUpperCase() + day.slice(1)}
             </button>
@@ -106,7 +107,7 @@ export default function Schedule() {
             <option value="">Tous les niveaux</option>
             {levels.map((level) => (
               <option key={level} value={level}>
-                 {level}
+                {level}
               </option>
             ))}
           </select>
@@ -116,31 +117,20 @@ export default function Schedule() {
           <table className="min-w-full bg-white shadow-lg rounded-lg">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-2 border-b text-lg font-semibold text-gray-700">
-                  Horaire
-                </th>
+                <th className="px-4 py-2 border-b text-lg font-semibold text-gray-700">Horaire</th>
                 {allRoomsForActiveTab.map((room) => (
-                  <th
-                    key={room}
-                    className="px-4 py-2 border-b text-lg font-semibold text-gray-700"
-                  >
-                    {room}
-                  </th>
+                  <th key={room} className="px-4 py-2 border-b text-lg font-semibold text-gray-700">{room}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {groupedData[activeTab]?.map((schedule) => (
                 <tr key={schedule.creneau_horaire}>
-                  <td className="px-4 py-2 border-b text-gray-600">
-                    {schedule.creneau_horaire}
-                  </td>
+                  <td className="px-4 py-2 border-b text-gray-600">{schedule.creneau_horaire}</td>
                   {allRoomsForActiveTab.map((room) => (
                     <td key={room} className="px-4 py-2 border-b text-gray-600">
                       {schedule.salles[room]?.map((group, idx) => (
-                        <div key={idx}>
-                          {group.groupe} ({group.niveau})
-                        </div>
+                        <div key={idx}>{group.groupe} ({group.niveau})</div>
                       )) || '—'}
                     </td>
                   ))}

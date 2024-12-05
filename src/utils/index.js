@@ -12,6 +12,8 @@ export const fetchRoomsData = () => [
   { id: 2, name: 'Salle B' },
   { id: 3, name: 'Salle C' },
   { id: 4, name: 'Salle D' },
+  { id: 5, name: 'Salle E' },
+  { id: 6, name: 'Salle F' },
 ];
 
 export const fetchSessionsData = () => [
@@ -115,6 +117,36 @@ export const fetchGroups = () => {
       sessions_per_week: 1,
       sessions: [
         { day: 'Lundi', start_time: '16:00', end_time: '18:00', room_name: rooms.find(room => room.id === 3)?.name },
+      ],
+      session_name: sessions.find(session => session.id === 3)?.session_name,
+    },
+    {
+      id: 8,
+      group_name: 'Groupe M',
+      level: levels.find(level => level.id === 1)?.name,
+      sessions_per_week: 1,
+      sessions: [
+        { day: 'Lundi', start_time: '16:00', end_time: '18:00', room_name: rooms.find(room => room.id === 4)?.name },
+      ],
+      session_name: sessions.find(session => session.id === 3)?.session_name,
+    },
+    {
+      id: 9,
+      group_name: 'Groupe N',
+      level: levels.find(level => level.id === 2)?.name,
+      sessions_per_week: 1,
+      sessions: [
+        { day: 'Lundi', start_time: '16:00', end_time: '18:00', room_name: rooms.find(room => room.id === 5)?.name },
+      ],
+      session_name: sessions.find(session => session.id === 3)?.session_name,
+    },
+    {
+      id: 10,
+      group_name: 'Groupe O',
+      level: levels.find(level => level.id === 2)?.name,
+      sessions_per_week: 1,
+      sessions: [
+        { day: 'Mardi', start_time: '16:00', end_time: '18:00', room_name: rooms.find(room => room.id === 6)?.name },
       ],
       session_name: sessions.find(session => session.id === 3)?.session_name,
     },
