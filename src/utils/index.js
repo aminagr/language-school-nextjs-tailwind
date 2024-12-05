@@ -31,6 +31,14 @@ export const fetchSessionsData = () => [
     registration_start_date: '2023-12-15',
     registration_end_date: '2024-01-15',
   },
+  {
+    id: 3,
+    session_name: 'Session Fevrier 2025',
+    start_date: '2025-02-01',
+    end_date: '2025-06-30',
+    registration_start_date: '2023-01-15',
+    registration_end_date: '2024-01-30',
+  },
 ];
 
 export const fetchGroups = () => {

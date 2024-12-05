@@ -3,15 +3,16 @@ import { fetchLevelsData, fetchRoomsData, fetchSessionsData } from '@/utils';
 
 const AddGroupModal = ({ onSave, onClose }) => {
   const [groupName, setGroupName] = useState('');
-  const [level, setLevel] = useState('');
+  const [level, setLevel] = useState('');  // Valeur par défaut vide
   const [sessionsPerWeek, setSessionsPerWeek] = useState(1);
   const [sessions, setSessions] = useState([]);
-  const [sessionName, setSessionName] = useState('');
+  const [sessionName, setSessionName] = useState('');  // Valeur par défaut vide
 
   const levels = fetchLevelsData();
   const rooms = fetchRoomsData();
   const sessionsData = fetchSessionsData();
 
+  // Set default sessions based on sessionsPerWeek
   useEffect(() => {
     const newSessions = Array.from({ length: sessionsPerWeek }, () => ({
       day: 'Lundi',
@@ -22,13 +23,14 @@ const AddGroupModal = ({ onSave, onClose }) => {
     setSessions(newSessions);
   }, [sessionsPerWeek]);
 
+  // Only set default values once the levels and sessionsData are available
   useEffect(() => {
-    if (levels.length > 0) {
-      setLevel(levels[0].id); 
+    if (levels.length > 0 && !level) {
+      setLevel(levels[0].id); // Valeur par défaut si non définie
     }
 
-    if (sessionsData.length > 0) {
-      setSessionName(sessionsData[0].session_name); 
+    if (sessionsData.length > 0 && !sessionName) {
+      setSessionName(sessionsData[sessionsData.length - 1].session_name); // Dernière session
     }
   }, [levels, sessionsData]);
 
@@ -40,15 +42,15 @@ const AddGroupModal = ({ onSave, onClose }) => {
 
   const handleSubmit = () => {
     if (!groupName || !level || sessions.length === 0 || !sessionName) return;
-  
+
     const selectedLevel = levels.find(lvl => lvl.id === parseInt(level));
     const selectedSession = sessionsData.find(session => session.session_name === sessionName);
-  
+
     const formattedSessions = sessions.map(session => ({
       ...session,
       room_name: rooms.find(room => room.id === parseInt(session.room))?.name, 
     }));
-  
+
     onSave({
       group_name: groupName,
       level: selectedLevel ? selectedLevel.name : '',
