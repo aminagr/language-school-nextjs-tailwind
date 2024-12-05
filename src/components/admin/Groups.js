@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';   
+import React, { useState, useEffect } from 'react';    
 import { FaPlus, FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import AddGroupModal from '@/components/admin/AddGroupModal';
 import EditGroupModal from '@/components/admin/EditGroupModal';
 import DeleteGroupModal from '@/components/admin/DeleteGroupModal';
-import { fetchGroups, fetchSessionsData } from '@/utils/index'; 
+import { fetchGroups, fetchSessionsData, fetchLevelsData } from '@/utils/index'; 
 
 const Groups = () => {
   const [groups, setGroups] = useState([]);
@@ -15,9 +15,10 @@ const Groups = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSession, setSelectedSession] = useState('');  // État pour gérer la session sélectionnée
+  const [selectedLevel, setSelectedLevel] = useState(''); // État pour gérer le niveau sélectionné
   const itemsPerPage = 10;
 
-  // Récupération des groupes et des sessions
+  // Récupération des groupes, des sessions et des niveaux
   useEffect(() => {
     const fetchedGroups = fetchGroups(); 
     setGroups(fetchedGroups);
@@ -47,8 +48,10 @@ const Groups = () => {
     setDeleteData(null);
   };
 
+  // Filtrer les groupes selon la session et le niveau
   const filteredGroups = groups.filter((group) =>
-    (selectedSession ? group.session_name === selectedSession : true) && 
+    (selectedSession ? group.session_name === selectedSession : true) &&
+    (selectedLevel ? group.level === selectedLevel : true) &&
     group.group_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -71,6 +74,11 @@ const Groups = () => {
     setCurrentPage(1);  // Réinitialiser la pagination lors du changement de session
   };
 
+  const handleLevelChange = (e) => {
+    setSelectedLevel(e.target.value);  // Mettre à jour le niveau sélectionné
+    setCurrentPage(1);  // Réinitialiser la pagination lors du changement de niveau
+  };
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-4">
@@ -84,18 +92,32 @@ const Groups = () => {
           }}
           className="p-2 border border-gray-300 rounded-lg w-1/3"
         />
-        <select
-          value={selectedSession}
-          onChange={handleSessionChange}
-          className="p-2 border border-gray-300 rounded-lg w-1/3"
-        >
-          <option value="">Toutes les sessions</option>
-          {fetchSessionsData().map((session) => (
-            <option key={session.id} value={session.session_name}>
-              {session.session_name}
-            </option>
-          ))}
-        </select>
+        <div className="flex space-x-4">
+          <select
+            value={selectedSession}
+            onChange={handleSessionChange}
+            className="p-2 border border-gray-300 rounded-lg w-1/3"
+          >
+            <option value="">Toutes les sessions</option>
+            {fetchSessionsData().map((session) => (
+              <option key={session.id} value={session.session_name}>
+                {session.session_name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedLevel}
+            onChange={handleLevelChange}
+            className="p-2 border border-gray-300 rounded-lg w-1/3"
+          >
+            <option value="">Tous les niveaux</option>
+            {fetchLevelsData().map((level) => (
+              <option key={level.id} value={level.name}>
+                {level.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
