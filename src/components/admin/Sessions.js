@@ -59,26 +59,28 @@ const Sessions = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center mb-4">
-        <input
-          type="text"
-          placeholder="Rechercher une session..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1); 
-          }}
-          className="p-2 border border-gray-300 rounded-lg w-1/3"
-        />
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          <FaPlus className="mr-2" />
-          Ajouter une session
-        </button>
-      </div>
+<div className="p-6 bg-white rounded-lg shadow-lg">
+  <div className="flex flex-col pb-2 md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+    <input
+      type="text"
+      placeholder="Rechercher une session..."
+      value={searchTerm}
+      onChange={(e) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1);
+      }}
+      className="p-2 border border-gray-300 rounded-lg w-full md:w-1/3"
+    />
+    <button
+      onClick={() => setIsAddModalOpen(true)}
+      className="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 w-full md:w-auto"
+    >
+      <FaPlus className="mr-2" />
+      Ajouter une session
+    </button>
+  </div>
+
+
 
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-200">

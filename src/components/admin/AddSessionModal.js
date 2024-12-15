@@ -42,7 +42,7 @@ const AddSessionModal = ({ onClose, onSave }) => {
         "La date de fin d'inscription doit être après la date de début d'inscription.";
     }
 
-    if (
+   /* if (
       formData.registration_start_date &&
       formData.registration_end_date &&
       (new Date(formData.registration_start_date) < new Date(formData.start_date) ||
@@ -50,7 +50,7 @@ const AddSessionModal = ({ onClose, onSave }) => {
     ) {
       newErrors.registration_end_date =
         "Les dates d'inscription doivent être à l'intérieur de la période de la session.";
-    }
+    }*/
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
