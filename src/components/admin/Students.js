@@ -15,6 +15,7 @@ const Students = () => {
     lieuNaissance: "",
     adresse: "",
     type: "",
+    etat:"",
   });
 
   const handleAddStudent = () => {
@@ -30,6 +31,7 @@ const Students = () => {
       lieuNaissance: "",
       adresse: "",
       type: "",
+      etat:"",
     });
   };
 
@@ -82,6 +84,7 @@ const Students = () => {
                 "Lieu de Naissance",
                 "Adresse",
                 "Type",
+                "Etat",
                 "Actions",
               ].map((header) => (
                 <th key={header} className="px-4 py-2 border text-left">
@@ -103,6 +106,7 @@ const Students = () => {
                 <td className="px-4 py-2 border">{student.lieuNaissance}</td>
                 <td className="px-4 py-2 border">{student.adresse}</td>
                 <td className="px-4 py-2 border">{student.type}</td>
+                <td className="px-4 py-2 border">{student.etat}</td>
                 <td className="px-4 py-2 border">
                   <button
                     onClick={() => handleDeleteStudent(student.id)}
