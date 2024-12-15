@@ -110,7 +110,7 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="w-full md:w-3/4">
+    <div className="w-full md:w-3/4 overflow-x-scroll">
       <h1 className="text-3xl md:text-4xl font-bold text-white mb-6 md:mb-8 text-center">
         Créer un compte
       </h1>
