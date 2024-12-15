@@ -110,8 +110,9 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="w-full md:w-3/4 overflow-x-scroll">
-      <h1 className="text-3xl md:text-4xl font-bold text-white mb-6 md:mb-8 text-center">
+ 
+    <div className="w-full md:w-3/4">
+      <h1 className="text-3xl md:text-4xl font-bold text-custom-blue mb-6 md:mb-8 text-center">
         Créer un compte
       </h1>
       <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
@@ -125,60 +126,62 @@ const SignupForm = () => {
           { name: "phone", label: "Téléphone", icon: FaPhone, type: "tel" },
         ].map(({ name, label, icon: Icon, type = "text" }) => (
           <div key={name}>
-            <label htmlFor={name} className="text-white text-sm font-medium block mb-1">
+            <label htmlFor={name} className="text-custom-blue text-sm font-medium block mb-1">
               {label}
             </label>
             <div className="relative">
-              <Icon className="absolute left-2 top-3 text-white" />
+              <Icon className="absolute left-2 top-3 text-custom-blue" />
               <input
                 type={type}
                 id={name}
                 name={name}
                 value={formData[name]}
                 onChange={handleChange}
-                className="peer h-10 w-full bg-transparent border-b-2 border-gray-400 text-white placeholder-gray pl-10 focus:outline-none focus:border-white"
+                className="peer h-10 w-full bg-transparent border-b-2 border-gray-400 text-custom-blue placeholder-gray pl-10 focus:outline-none focus:border-custom-blue"
                 placeholder={label}
               />
             </div>
           </div>
         ))}
 
-        <div>
-          <span className="text-white text-sm font-medium block mb-2">
-            Vous êtes :
-          </span>
-          <div className="flex space-x-4">
-            {["Étudiant", "Fonctionnaire", "Externe"].map((type) => (
-              <label key={type} className="flex items-center space-x-2 text-white">
-                <input
-                  type="radio"
-                  name="userType"
-                  value={type}
-                  checked={formData.userType === type}
-                  onChange={handleChange}
-                  className="accent-indigo-600"
-                />
-                <span>{type}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+<div>
+  <span className="text-custom-blue text-sm font-medium block mb-2">
+    Vous êtes :
+  </span>
+  <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+    {["Étudiant", "Fonctionnaire", "Externe"].map((type) => (
+      <label key={type} className="flex items-center space-x-2 text-gray-700">
+        <input
+          type="radio"
+          name="userType"
+          value={type}
+          checked={formData.userType === type}
+          onChange={handleChange}
+          className="accent-indigo-600"
+        />
+        <span>{type}</span>
+      </label>
+    ))}
+  </div>
+</div>
+
+
 
         {[{ name: "password", label: "Mot de passe", icon: FaLock },
           { name: "passwordConfirmation", label: "Confirmer le mot de passe", icon: FaLock }].map(({ name, label, icon: Icon }) => (
           <div key={name}>
-            <label htmlFor={name} className="text-white text-sm font-medium block mb-1">
+            <label htmlFor={name} className="text-custom-blue text-sm font-medium block mb-1">
               {label}
             </label>
             <div className="relative">
-              <Icon className="absolute left-2 top-3 text-white" />
+              <Icon className="absolute left-2 top-3 text-custom-blue" />
               <input
                 type="password"
                 id={name}
                 name={name}
                 value={formData[name]}
                 onChange={handleChange}
-                className="peer h-10 w-full bg-transparent border-b-2 border-gray-400 text-white placeholder-white pl-10 focus:outline-none focus:border-white"
+                className="peer h-10 w-full bg-transparent border-b-2 border-gray-400 text-custom-blue placeholder-gray pl-10 focus:outline-none focus:border-custom-blue"
                 placeholder={label}
               />
             </div>
@@ -190,7 +193,7 @@ const SignupForm = () => {
 
         <button
           type="submit"
-          className="w-full py-2 bg-white text-indigo-600 text-lg font-bold uppercase rounded-full hover:bg-gray-200"
+          className="w-full py-2 bg-custom-blue text-white text-lg font-bold uppercase rounded-full hover:bg-black hover:text-white"
         >
           {isLoading ? <FaSync className="animate-spin mx-auto" /> : "Inscription"}
         </button>
