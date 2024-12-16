@@ -148,7 +148,84 @@ export const fetchGroups = () => {
       sessions: [
         { day: 'Mardi', start_time: '16:00', end_time: '18:00', room_name: rooms.find(room => room.id === 6)?.name },
       ],
-      session_name: sessions.find(session => session.id === 3)?.session_name,
+      session_name: sessions.find(session => session.id === 2)?.session_name,
     },
   ];
+};
+
+export const fetchStudentsData = () => {
+  return [
+    {
+      id: 1,
+      matricule: '12345',
+      nom: 'Dupont',
+      prenom: 'Jean',
+      date_naissance: '1998-01-01',
+      lieu_naissance: 'Alger',
+      adresse: '10 rue de l\'Université, Alger',
+      telephone: '0551234567',
+      mail: 'jean.dupont@example.com',
+      type: 'Externe'
+    },
+    {
+      id: 2,
+      matricule: '12346',
+      nom: 'Benali',
+      prenom: 'Sophie',
+      date_naissance: '1999-03-15',
+      lieu_naissance: 'Oran',
+      adresse: '12 rue des Roses, Oran',
+      telephone: '0559876543',
+      mail: 'sophie.benali@example.com',
+      type: 'Etudiant'
+    },
+   
+  ];
+};
+
+
+export const fetchRegistrations = () => {
+  const students = fetchStudentsData();
+  const groups = fetchGroups();
+  const sessions = fetchSessionsData();
+  const levels = fetchLevelsData();
+
+  
+  let registrationId = 1;
+
+  
+  const registrations = [
+    {
+      id: registrationId++, 
+      matricule: students[0].matricule,
+      nom_prenom: `${students[0].nom} ${students[0].prenom}`,
+      session: sessions[1].session_name, 
+      niveau: levels[1].name, 
+      groupe: groups[9].group_name, 
+      date: '2023-01-20',
+      etat: 'confirmé'
+    },
+    {
+      id: registrationId++, 
+      matricule: students[0].matricule,
+      nom_prenom: `${students[0].nom} ${students[0].prenom}`,
+      session: sessions[2].session_name, 
+      niveau: levels[2].name, 
+      groupe: groups[5].group_name, 
+      date: '2023-01-20',
+      etat: 'non confirmé'
+    },
+    {
+      id: registrationId++,
+      matricule: students[1].matricule,
+      nom_prenom: `${students[1].nom} ${students[1].prenom}`,
+      session: sessions[2].session_name, 
+      niveau: levels[0].name, 
+      groupe: groups[0].group_name, 
+      date: '2023-01-20',
+      etat: 'non confirmé'
+    }
+  ];
+
+  return registrations; 
 };

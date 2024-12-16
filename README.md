@@ -26,7 +26,7 @@ A modern, responsive website for a Russian language school built with **Next.js*
 
 ```bash
 git clone https://github.com/aminagr/language-school-nextjs-tailwind.git
-cd nextjs-tailwind
+cd language-school-nextjs-tailwind
 ``` 
 2. **Install dependencies:**
 ```bash

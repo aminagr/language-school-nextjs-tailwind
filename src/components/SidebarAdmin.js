@@ -97,7 +97,7 @@ const SidebarAdmin = () => {
             <Link
               href={`/${locale}/admin/rooms`}
               className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
-              onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+              onClick={handleLinkClick} 
             >
               <FaBuilding className="mr-3 text-xl" />
               <span className="text-lg">Salles</span>
@@ -107,7 +107,7 @@ const SidebarAdmin = () => {
             <Link
               href={`/${locale}/admin/levels`}
               className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
-              onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+              onClick={handleLinkClick} 
             >
               <FaLayerGroup className="mr-3 text-xl" />
               <span className="text-lg">Niveaux</span>
@@ -117,7 +117,7 @@ const SidebarAdmin = () => {
             <Link
               href={`/${locale}/admin/sessions`}
               className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
-              onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+              onClick={handleLinkClick} 
             >
               <FaCalendarAlt className="mr-3 text-xl" />
               <span className="text-lg">Sessions</span>
@@ -127,7 +127,7 @@ const SidebarAdmin = () => {
             <Link
               href={`/${locale}/admin/groups`}
               className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
-              onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+              onClick={handleLinkClick}
             >
               <FaUsers className="mr-3 text-xl" />
               <span className="text-lg">Groupes</span>
@@ -137,7 +137,7 @@ const SidebarAdmin = () => {
             <Link
               href={`/${locale}/admin/registrations`}
               className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
-              onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+              onClick={handleLinkClick} 
             >
               <FaClipboardList className="mr-3 text-xl" />
               <span className="text-lg">Inscriptions</span>
@@ -159,7 +159,7 @@ const SidebarAdmin = () => {
                 <Link
                   href={`/${locale}/admin/students/registered`}
                   className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
-                  onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+                  onClick={handleLinkClick} 
                 >
                   Étudiants inscrits
                 </Link>
@@ -168,16 +168,16 @@ const SidebarAdmin = () => {
                 <Link
                   href={`/${locale}/admin/students/confirmed`}
                   className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
-                  onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+                  onClick={handleLinkClick} 
                 >
                   Étudiants confirmés
                 </Link>
               </li>
               <li>
                 <Link
-                  href={`/${locale}/admin/students/all`}
+                  href={`/${locale}/admin/students`}
                   className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
-                  onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+                  onClick={handleLinkClick}
                 >
                   Tous les étudiants
                 </Link>

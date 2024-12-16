@@ -1,131 +1,191 @@
-import React, { useState } from "react";
-import { FaPlus, FaTrash, FaSearch } from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import { FaPlus, FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import AddStudentModal from '@/components/admin/AddStudentModal';
+import EditStudentModal from '@/components/admin/EditStudentModal';
+import DeleteStudentModal from '@/components/admin/DeleteStudentModal';
+import { fetchStudentsData } from '@/utils'; 
 
 const Students = () => {
   const [students, setStudents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [newStudent, setNewStudent] = useState({
-    id: "",
-    matricule: "",
-    nom: "",
-    prenom: "",
-    email: "",
-    telephone: "",
-    dateNaissance: "",
-    lieuNaissance: "",
-    adresse: "",
-    type: "",
-    etat:"",
-  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editData, setEditData] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteStudentName, setDeleteStudentName] = useState('');
+  const [deleteStudentId, setDeleteStudentId] = useState(null); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const studentsPerPage = 20; 
 
-  const handleAddStudent = () => {
-    setStudents([...students, { ...newStudent, id: Date.now() }]);
-    setNewStudent({
-      id: "",
-      matricule: "",
-      nom: "",
-      prenom: "",
-      email: "",
-      telephone: "",
-      dateNaissance: "",
-      lieuNaissance: "",
-      adresse: "",
-      type: "",
-      etat:"",
-    });
+  useEffect(() => {
+    const fetchedStudents = fetchStudentsData();
+    setStudents(fetchedStudents);
+  }, []);
+
+  const handleAddStudent = (newStudent) => {
+    const addedStudent = { id: Date.now(), ...newStudent };
+    setStudents([...students, addedStudent]);
+    setIsAddModalOpen(false);
+  };
+
+  const handleUpdateStudent = (updatedStudent) => {
+    const updated = students.map((student) =>
+      student.id === updatedStudent.id ? updatedStudent : student
+    );
+    setStudents(updated);
+    setIsEditModalOpen(false);
   };
 
   const handleDeleteStudent = (id) => {
-    setStudents(students.filter((student) => student.id !== id));
+    setStudents(students.filter((student) => student.id !== id)); 
+    setIsDeleteModalOpen(false); 
+  };
+
+  const handleOpenDeleteModal = (student) => {
+    setDeleteStudentName(student.nom);
+    setDeleteStudentId(student.id); 
+    setIsDeleteModalOpen(true);
   };
 
   const filteredStudents = students.filter((student) =>
-    Object.values(student).some((val) =>
-      val.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    Object.values(student).some(value =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
-  return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+  const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+  const currentStudents = filteredStudents.slice(
+    (currentPage - 1) * studentsPerPage,
+    currentPage * studentsPerPage
+  );
 
-      <div className="flex flex-wrap justify-between items-center mb-4">
-        <div className="relative w-full sm:w-1/2 mb-2 sm:mb-0">
-          <FaSearch className="absolute left-3 top-3 text-gray-400" />
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  return (
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="flex flex-col pb-2 md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 w-full">
           <input
             type="text"
             placeholder="Rechercher un étudiant..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 p-2 border border-gray-300 rounded-lg"
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="p-2 border border-gray-300 rounded-md w-full md:w-auto"
           />
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-4 py-2  bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center justify-center space-x-2"
+          >
+            <FaPlus />
+            <span>Ajouter un étudiant</span>
+          </button>
         </div>
+      </div>
+<div className='overflow-auto'>
+      <table className="min-w-full table-auto border-collapse">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="px-4 py-2 border-b text-left">ID</th>
+            <th className="px-4 py-2 border-b text-left">Matricule</th>
+            <th className="px-4 py-2 border-b text-left">Nom</th>
+            <th className="px-4 py-2 border-b text-left">Prénom</th>
+            <th className="px-4 py-2 border-b text-left">Date de naissance</th>
+            <th className="px-4 py-2 border-b text-left">Lieu de naissance</th>
+            <th className="px-4 py-2 border-b text-left">Adresse</th>
+            <th className="px-4 py-2 border-b text-left">Téléphone</th>
+            <th className="px-4 py-2 border-b text-left">Mail</th>
+            <th className="px-4 py-2 border-b text-left">Type</th>
+            <th className="px-4 py-2 border-b text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentStudents.map((student) => (
+            <tr key={student.id} className="hover:bg-gray-50">
+              <td className="px-4 py-2 border-b">{student.id}</td>
+              <td className="px-4 py-2 border-b">{student.matricule}</td>
+              <td className="px-4 py-2 border-b">{student.nom}</td>
+              <td className="px-4 py-2 border-b">{student.prenom}</td>
+              <td className="px-4 py-2 border-b">{student.date_naissance}</td>
+              <td className="px-4 py-2 border-b">{student.lieu_naissance}</td>
+              <td className="px-4 py-2 border-b">{student.adresse}</td>
+              <td className="px-4 py-2 border-b">{student.telephone}</td>
+              <td className="px-4 py-2 border-b">{student.mail}</td>
+              <td className="px-4 py-2 border-b">{student.type}</td>
+              <td className="px-4 py-2 border-b flex space-x-2">
+                <button
+                  onClick={() => {
+                    setEditData(student);
+                    setIsEditModalOpen(true);
+                  }}
+                  className="p-2 text-blue-500 hover:text-blue-700"
+                >
+                  <FaEdit />
+                </button>
+                <button
+                  onClick={() => handleOpenDeleteModal(student)}
+                  className="p-2 text-red-500 hover:text-red-700"
+                >
+                  <FaTrash />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      </div>
+      <div className="flex justify-between items-center mt-4">
         <button
-          onClick={handleAddStudent}
-          className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
         >
-          <FaPlus className="mr-2" />
-          Ajouter un étudiant
+          <FaChevronLeft />
+        </button>
+        <span>
+          Page {currentPage} sur {totalPages}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
+        >
+          <FaChevronRight />
         </button>
       </div>
 
-  
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse border border-gray-200">
-          <thead className="bg-gray-100">
-            <tr>
-              {[
-                "ID",
-                "Matricule",
-                "Nom",
-                "Prénom",
-                "Email",
-                "Téléphone",
-                "Date de Naissance",
-                "Lieu de Naissance",
-                "Adresse",
-                "Type",
-                "Etat",
-                "Actions",
-              ].map((header) => (
-                <th key={header} className="px-4 py-2 border text-left">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredStudents.map((student) => (
-              <tr key={student.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{student.id}</td>
-                <td className="px-4 py-2 border">{student.matricule}</td>
-                <td className="px-4 py-2 border">{student.nom}</td>
-                <td className="px-4 py-2 border">{student.prenom}</td>
-                <td className="px-4 py-2 border">{student.email}</td>
-                <td className="px-4 py-2 border">{student.telephone}</td>
-                <td className="px-4 py-2 border">{student.dateNaissance}</td>
-                <td className="px-4 py-2 border">{student.lieuNaissance}</td>
-                <td className="px-4 py-2 border">{student.adresse}</td>
-                <td className="px-4 py-2 border">{student.type}</td>
-                <td className="px-4 py-2 border">{student.etat}</td>
-                <td className="px-4 py-2 border">
-                  <button
-                    onClick={() => handleDeleteStudent(student.id)}
-                    className="p-2 text-red-500 hover:text-red-700"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-
-      {filteredStudents.length === 0 && (
-        <p className="mt-4 text-center text-gray-500">
-          Aucun étudiant trouvé.
-        </p>
+      {isEditModalOpen && (
+        <EditStudentModal
+          studentData={editData}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleUpdateStudent}
+        />
+      )}
+      {isAddModalOpen && (
+        <AddStudentModal
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={handleAddStudent}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteStudentModal
+          studentName={deleteStudentName}
+          studentId={deleteStudentId} 
+          onClose={() => setIsDeleteModalOpen(false)}
+          onDelete={() => handleDeleteStudent(deleteStudentId)}
+        />
       )}
     </div>
   );
