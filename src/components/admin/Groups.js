@@ -4,8 +4,13 @@ import AddGroupModal from '@/components/admin/AddGroupModal';
 import EditGroupModal from '@/components/admin/EditGroupModal';
 import DeleteGroupModal from '@/components/admin/DeleteGroupModal';
 import { fetchGroups, fetchSessionsData, fetchLevelsData } from '@/utils/index'; 
+import Link from 'next/link';
+import { useLocale } from 'next-intl'; 
+
+
 
 const Groups = () => {
+  const locale = useLocale();
   const [groups, setGroups] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editData, setEditData] = useState(null);
@@ -156,7 +161,12 @@ const filteredGroups = groups.filter((group) => {
             {currentGroups.map((group) => (
               <tr key={group.id} className="hover:bg-gray-50">
                 <td className="px-4 py-2 border">{group.id}</td>
-                <td className="px-4 py-2 border">{group.group_name}</td>
+                <td className="px-4 py-2 border">
+              
+                <Link href={`/${locale}/admin/groups/${group.id}`} className="text-blue-500 hover:text-blue-700">
+                    {group.group_name}
+                  </Link>
+                </td>
                 <td className="px-4 py-2 border">{group.session_name}</td>
                 <td className="px-4 py-2 border">{group.level}</td>
                 <td className="px-4 py-2 border">{group.sessions_per_week}</td>

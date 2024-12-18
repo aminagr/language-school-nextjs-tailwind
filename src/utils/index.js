@@ -225,3 +225,30 @@ export const fetchRegistrations = () => {
 
   return registrations; 
 };
+
+
+
+export const getStudentsByGroupId = (groupId) => {
+  const registrations = fetchRegistrations();
+  const students = fetchStudentsData();
+  const groups = fetchGroups(); // Déplacer cette ligne ici pour éviter des appels multiples
+
+  // Vérifier si le groupe existe
+  const group = groups.find(g => g.id === groupId);
+  if (!group) {
+    return []; // Si le groupe n'est pas trouvé, on retourne un tableau vide
+  }
+
+  // Trouver les inscriptions correspondant au groupe sélectionné
+  const groupRegistrations = registrations.filter(reg =>
+    reg.groupe === group.group_name
+  );
+
+  // Pour chaque inscription, récupérer le nom de l'étudiant
+  const studentNames = groupRegistrations.map(reg => {
+    const student = students.find(student => student.matricule === reg.matricule);
+    return `${student.nom} ${student.prenom}`;
+  });
+
+  return studentNames;
+};

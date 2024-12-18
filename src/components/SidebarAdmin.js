@@ -143,47 +143,19 @@ const SidebarAdmin = () => {
               <span className="text-lg">Inscriptions</span>
             </Link>
           </li>
-          <li className="group relative">
-            <div className="flex items-center justify-between py-2 px-4 rounded-lg hover:bg-gray-700 cursor-pointer transition-all">
-              <div className="flex items-center">
-                <FaUserGraduate className="mr-3 text-xl" />
-                <span className="text-lg">Étudiants</span>
-              </div>
-              <FaChevronDown className="text-sm group-hover:rotate-180 transition-transform duration-300" />
-            </div>
-            <ul
-              className="absolute left-64 top-0 bg-gray-700 rounded-lg shadow-md opacity-0 group-hover:opacity-100 group-hover:translate-x-0
-              transition-all duration-300 transform -translate-x-4 space-y-2 py-4 px-6 w-48"
+
+          <li>
+            <Link
+             href={`/${locale}/admin/students`}
+              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
+              onClick={handleLinkClick} 
             >
-              <li>
-                <Link
-                  href={`/${locale}/admin/students/registered`}
-                  className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
-                  onClick={handleLinkClick} 
-                >
-                  Étudiants inscrits
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/admin/students/confirmed`}
-                  className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
-                  onClick={handleLinkClick} 
-                >
-                  Étudiants confirmés
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/admin/students`}
-                  className="block text-sm py-2 px-3 rounded-lg bg-gray-800 hover:bg-indigo-500 hover:text-white transition-all"
-                  onClick={handleLinkClick}
-                >
-                  Tous les étudiants
-                </Link>
-              </li>
-            </ul>
+              <FaUserGraduate className="mr-3 text-xl" />
+              <span className="text-lg">Etudiants</span>
+            </Link>
           </li>
+
+
           <li>
             <Link
               href={`/${locale}/admin/settings`}
