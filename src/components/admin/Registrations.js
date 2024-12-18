@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import {
-  FaPlus,
-  FaEdit,
-  FaTrash,
-  FaChevronLeft,
-  FaChevronRight,
-  FaCheck,
-} from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';   
+import { FaPlus, FaEdit, FaTrash, FaChevronLeft, FaChevronRight, FaCheck } from 'react-icons/fa';
 import { fetchRegistrations, fetchSessionsData, fetchLevelsData } from '@/utils';
-import AddRegistrationModal from './AddRegistrationModal'; // Assurez-vous d'importer la modal
-
+import AddRegistrationModal from './AddRegistrationModal';
+import EditRegistrationModal from './EditRegistrationModal';
+import DeleteRegistrationModal from './DeleteRegistrationModal';
 const Registrations = () => {
   const [registrations, setRegistrations] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -18,9 +12,13 @@ const Registrations = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSession, setSelectedSession] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false); // Etat pour la modal
+  const [selectedState, setSelectedState] = useState('');
   const itemsPerPage = 10;
-
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingRegistration, setEditingRegistration] = useState(null);
+  const [deletingRegistration, setDeletingRegistration] = useState(null);
   useEffect(() => {
     const loadInitialData = async () => {
       const fetchedRegistrations = await fetchRegistrations();
@@ -28,9 +26,7 @@ const Registrations = () => {
 
       const fetchedSessions = await fetchSessionsData();
       setSessions(fetchedSessions);
-      setSelectedSession(
-        fetchedSessions[fetchedSessions.length - 1]?.session_name || ''
-      );
+      setSelectedSession(fetchedSessions[fetchedSessions.length - 1]?.session_name || '');
 
       const fetchedLevels = await fetchLevelsData();
       setLevels(fetchedLevels);
@@ -39,28 +35,41 @@ const Registrations = () => {
     loadInitialData();
   }, []);
 
-  const handleAddRegistration = () => {
-    setIsModalOpen(true); // Ouvrir la modal
-  };
-
-  const handleSaveRegistration = async (newRegistration) => {
-    // Save new registration
-    setRegistrations((prev) => [...prev, newRegistration]);
-
-    // Optionally fetch updated registrations
-    const updatedRegistrations = await fetchRegistrations();
-    setRegistrations(updatedRegistrations);
-
-    // Close the modal
-    setIsModalOpen(false);
+  const handleAddRegistration = (newRegistration) => {
+    setRegistrations((prevRegistrations) => {
+      const updatedRegistrations = [
+        ...prevRegistrations,
+        { id: Date.now(), ...newRegistration },
+      ];
+      return updatedRegistrations;
+    });
+    setCurrentPage(1);
+    setIsAddModalOpen(false);
   };
 
   const handleEditRegistration = (registration) => {
-    alert(`Éditer l'inscription: ${registration.id}`);
+    setEditingRegistration(registration);
+    setIsEditModalOpen(true);
   };
 
-  const handleDeleteRegistration = (registration) => {
-    alert(`Supprimer l'inscription: ${registration.id}`);
+  const handleSaveEditedRegistration = (updatedRegistration) => {
+    setRegistrations((prevRegistrations) =>
+      prevRegistrations.map((reg) =>
+        reg.id === updatedRegistration.id ? updatedRegistration : reg
+      )
+    );
+    setIsEditModalOpen(false);
+  };
+  const handleOpenDeleteModal = (registration) => {
+    setDeletingRegistration(registration);
+    setIsDeleteModalOpen(true);
+  };
+  const handleDeleteRegistration = () => {
+    setRegistrations((prevRegistrations) =>
+      prevRegistrations.filter((reg) => reg.id !== deletingRegistration.id)
+    );
+    setIsDeleteModalOpen(false);
+    setDeletingRegistration(null);
   };
 
   const handleConfirmRegistration = (registration) => {
@@ -74,13 +83,12 @@ const Registrations = () => {
   const filteredRegistrations = registrations.filter((registration) => {
     const matchesSearch =
       registration.nom_prenom?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
-    const matchesSession = selectedSession
-      ? registration.session === selectedSession
-      : true;
+    const matchesSession = selectedSession ? registration.session === selectedSession : true;
     const matchesLevel = selectedLevel ? registration.niveau === selectedLevel : true;
-    return matchesSearch && matchesSession && matchesLevel;
+    const matchesState = selectedState ? registration.etat === selectedState : true;
+    return matchesSearch && matchesSession && matchesLevel && matchesState;
   });
-  
+
   const totalPages = Math.ceil(filteredRegistrations.length / itemsPerPage);
   const currentRegistrations = filteredRegistrations.slice(
     (currentPage - 1) * itemsPerPage,
@@ -97,7 +105,6 @@ const Registrations = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      {/* Contenu de la page */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-4">
         <input
           type="text"
@@ -136,16 +143,25 @@ const Registrations = () => {
           ))}
         </select>
 
+        <select
+          value={selectedState}
+          onChange={(e) => setSelectedState(e.target.value)}
+          className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/6"
+        >
+          <option value="">Tous les états</option>
+          <option value="confirmé">Confirmé</option>
+          <option value="non confirmé">Non confirmé</option>
+        </select>
+
         <button
-          onClick={handleAddRegistration}
           className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mb-4 sm:mb-0"
+          onClick={() => setIsAddModalOpen(true)}
         >
           <FaPlus className="mr-2" />
           Ajouter une inscription
         </button>
       </div>
 
-      {/* Affichage de la table */}
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-200">
           <thead className="bg-gray-100">
@@ -180,7 +196,7 @@ const Registrations = () => {
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => handleDeleteRegistration(registration)}
+                    onClick={() => handleOpenDeleteModal(registration)}
                     className="mr-2 text-red-500 hover:text-red-600"
                   >
                     <FaTrash />
@@ -200,7 +216,6 @@ const Registrations = () => {
         </table>
       </div>
 
-      {/* Navigation */}
       <div className="flex justify-between mt-4">
         <button onClick={handlePrevPage} className="px-4 py-2 bg-gray-300 rounded-lg">
           <FaChevronLeft />
@@ -213,15 +228,26 @@ const Registrations = () => {
         </button>
       </div>
 
-      {/* Affichage de la modal */}
-      {isModalOpen && (
-        <AddRegistrationModal
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveRegistration}
+      {isAddModalOpen && (
+        <AddRegistrationModal onClose={() => setIsAddModalOpen(false)} onSave={handleAddRegistration} />
+      )}
+
+      {isEditModalOpen && (
+        <EditRegistrationModal
+          registration={editingRegistration}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleSaveEditedRegistration}
         />
       )}
-    </div>
-  );
+ 
+{isDeleteModalOpen && deletingRegistration && (
+  <DeleteRegistrationModal
+    registrationName={deletingRegistration.nom_prenom}
+    onClose={() => setIsDeleteModalOpen(false)}
+    onDelete={handleDeleteRegistration}
+  />
+)}
+</div>
+);
 };
-
 export default Registrations;

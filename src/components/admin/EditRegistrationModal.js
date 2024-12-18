@@ -1,46 +1,63 @@
 import React, { useState, useEffect } from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 import { fetchStudentsData, fetchSessionsData, fetchLevelsData, fetchGroups } from '@/utils';
 
-const AddRegistrationModal = ({ onClose, onSave }) => {
-  const [matricule, setMatricule] = useState('');
-  const [session, setSession] = useState('');
-  const [niveau, setNiveau] = useState('');  
-  const [groupe, setGroupe] = useState('');   
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [etat, setEtat] = useState('non confirmé'); 
+const EditRegistrationModal = ({ registration, onClose, onSave }) => {
+  const [matricule, setMatricule] = useState(registration.matricule || '');
+  const [session, setSession] = useState(registration.session || '');
+  const [niveau, setNiveau] = useState('');
+  const [groupe, setGroupe] = useState('');
+  const [date, setDate] = useState(registration.date || new Date().toISOString().slice(0, 10));
+  const [etat, setEtat] = useState(registration.etat || 'non confirmé');
   const [students, setStudents] = useState([]);
   const [sessionsData, setSessionsData] = useState([]);
   const [levelsData, setLevelsData] = useState([]);
   const [groupsData, setGroupsData] = useState([]);
   const [filteredGroups, setFilteredGroups] = useState([]);
-  const [filteredMatricules, setFilteredMatricules] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const studentsData = await fetchStudentsData();
-      const sessions = await fetchSessionsData();
-      const levels = await fetchLevelsData();
-      const groups = await fetchGroups();
+      try {
+        const [studentsData, sessions, levels, groups] = await Promise.all([
+          fetchStudentsData(),
+          fetchSessionsData(),
+          fetchLevelsData(),
+          fetchGroups(),
+        ]);
 
-      setStudents(studentsData);
-      setSessionsData(sessions);
-      setLevelsData(levels);
-      setGroupsData(groups);
+        setStudents(studentsData);
+        setSessionsData(sessions);
+        setLevelsData(levels);
+        setGroupsData(groups);
 
-      setSession(sessions[sessions.length - 1]?.session_name || '');
-      setNiveau(levels[0]?.id || ''); 
+        // Initialiser les valeurs de niveau et de groupe
+        if (registration.niveau && registration.groupe) {
+          const initialLevel = levels.find((lvl) => lvl.name === registration.niveau);
+          const initialGroup = groups.find((grp) => grp.group_name === registration.groupe);
+
+          if (initialLevel) setNiveau(initialLevel.id);
+          if (initialGroup) setGroupe(initialGroup.id);
+
+          const filtered = groups.filter(
+            (grp) =>
+              grp.level === registration.niveau &&
+              grp.session_name === registration.session
+          );
+          setFilteredGroups(filtered);
+        }
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
     };
 
     fetchData();
-  }, []);
+  }, [registration]);
 
   useEffect(() => {
     if (niveau && session) {
+      const levelName = levelsData.find((lvl) => lvl.id === parseInt(niveau))?.name;
       const filtered = groupsData.filter(
-        (grp) =>
-          grp.level === levelsData.find((lvl) => lvl.id === parseInt(niveau))?.name &&
-          grp.session_name === session
+        (grp) => grp.level === levelName && grp.session_name === session
       );
       setFilteredGroups(filtered);
     } else {
@@ -50,80 +67,47 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
 
   const handleSave = () => {
     if (matricule && session && niveau && groupe) {
-     
       const niveauName = levelsData.find((lvl) => lvl.id === parseInt(niveau))?.name;
-    
       const groupeName = filteredGroups.find((grp) => grp.id === parseInt(groupe))?.group_name;
-  
-  
       const student = students.find((stu) => stu.matricule === matricule);
-      const fullName = `${student?.nom} ${student?.prenom}`;  
-  
-     
-      const newRegistration = {
+      const fullName = `${student?.nom} ${student?.prenom}`;
+
+      const updatedRegistration = {
+        ...registration,
         matricule,
         session,
-        niveau: niveauName,  
-        groupe: groupeName,   
-        nom_prenom: fullName,  
+        niveau: niveauName,
+        groupe: groupeName,
+        nom_prenom: fullName,
         date,
-        etat, 
+        etat,
       };
-  
-      onSave(newRegistration);
+
+      onSave(updatedRegistration);
       onClose();
     } else {
       alert('Veuillez remplir tous les champs.');
     }
   };
 
-  const handleMatriculeChange = (e) => {
-    setMatricule(e.target.value);
-   
-    setFilteredMatricules(
-      students.filter((student) =>
-        student.matricule.toLowerCase().includes(e.target.value.toLowerCase())
-      )
-    );
-  };
-
-  const handleMatriculeSelect = (selectedMatricule) => {
-    setMatricule(selectedMatricule);
-    setFilteredMatricules([]);
-  };
-
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl">Ajouter une inscription</h2>
+          <h2 className="text-2xl">Modifier l'inscription</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <FaTimes />
           </button>
         </div>
 
-   
-        <div className="mb-4 relative">
+        <div className="mb-4">
           <input
             type="text"
             value={matricule}
-            onChange={handleMatriculeChange}
+            onChange={(e) => setMatricule(e.target.value)}
             placeholder="Matricule"
             className="p-2 border border-gray-300 rounded-lg w-full"
           />
-          {matricule && filteredMatricules.length > 0 && (
-            <div className="absolute mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
-              {filteredMatricules.map((student) => (
-                <div
-                  key={student.matricule}
-                  className="p-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleMatriculeSelect(student.matricule)}
-                >
-                  {student.matricule} - {student.nom} {student.prenom}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         <div className="mb-4">
@@ -141,7 +125,6 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-  
         <div className="mb-4">
           <select
             value={niveau}
@@ -149,15 +132,14 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
             className="p-2 border border-gray-300 rounded-lg w-full"
           >
             <option value="">Sélectionner un niveau</option>
-            {levelsData.map((lvl) => (
-              <option key={lvl.id} value={lvl.id}>
-                {lvl.name}
+            {levelsData.map((level) => (
+              <option key={level.id} value={level.id}>
+                {level.name}
               </option>
             ))}
           </select>
         </div>
 
-       
         <div className="mb-4">
           <select
             value={groupe}
@@ -165,17 +147,15 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
             className="p-2 border border-gray-300 rounded-lg w-full"
           >
             <option value="">Sélectionner un groupe</option>
-            {filteredGroups.map((grp) => (
-              <option key={grp.id} value={grp.id}>
-                {grp.group_name}
+            {filteredGroups.map((group) => (
+              <option key={group.id} value={group.id}>
+                {group.group_name}
               </option>
             ))}
           </select>
         </div>
 
-
         <div className="mb-4">
-          <label className="block text-sm">Date</label>
           <input
             type="date"
             value={date}
@@ -184,33 +164,28 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           />
         </div>
 
-     
         <div className="mb-4">
-          <label className="block text-sm">État</label>
           <select
             value={etat}
             onChange={(e) => setEtat(e.target.value)}
             className="p-2 border border-gray-300 rounded-lg w-full"
           >
-            <option value="non confirmé">Non confirmé</option>
             <option value="confirmé">Confirmé</option>
+            <option value="non confirmé">Non confirmé</option>
           </select>
         </div>
 
-     
-        <div className="flex justify-between">
+        <div className="flex justify-end space-x-4">
           <button
             onClick={handleSave}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
           >
-            <FaCheck className="mr-2" />
             Enregistrer
           </button>
           <button
             onClick={onClose}
-            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
           >
-            <FaTimes className="mr-2" />
             Annuler
           </button>
         </div>
@@ -219,4 +194,4 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
   );
 };
 
-export default AddRegistrationModal;
+export default EditRegistrationModal;

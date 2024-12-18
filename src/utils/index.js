@@ -190,13 +190,9 @@ export const fetchRegistrations = () => {
   const sessions = fetchSessionsData();
   const levels = fetchLevelsData();
 
-  
-  let registrationId = 1;
-
-  
   const registrations = [
     {
-      id: registrationId++, 
+      id: 1, 
       matricule: students[0].matricule,
       nom_prenom: `${students[0].nom} ${students[0].prenom}`,
       session: sessions[1].session_name, 
@@ -206,7 +202,7 @@ export const fetchRegistrations = () => {
       etat: 'confirmé'
     },
     {
-      id: registrationId++, 
+      id: 2, 
       matricule: students[0].matricule,
       nom_prenom: `${students[0].nom} ${students[0].prenom}`,
       session: sessions[2].session_name, 
@@ -216,7 +212,7 @@ export const fetchRegistrations = () => {
       etat: 'non confirmé'
     },
     {
-      id: registrationId++,
+      id: 3,
       matricule: students[1].matricule,
       nom_prenom: `${students[1].nom} ${students[1].prenom}`,
       session: sessions[2].session_name, 
