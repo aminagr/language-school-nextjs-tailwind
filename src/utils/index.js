@@ -731,3 +731,41 @@ export const getEnrollmentOverTimeChartData = () => {
     count,
   }));
 };
+
+
+export const getStudentTypesCount = () => {
+  const students = fetchStudentsData(); 
+  
+
+  const studentTypesCount = {
+    Etudiant: 0,
+    Fonctionnaire: 0,
+    Externe: 0,
+  };
+  
+  
+  students.forEach(student => {
+    if (studentTypesCount[student.type] !== undefined) {
+      studentTypesCount[student.type]++;
+    }
+  });
+  
+
+  return {
+    labels: ['Etudiant', 'Fonctionnaire', 'Externe'],
+    datasets: [
+      {
+        label: 'Nombre d\'étudiants par type',
+        data: [
+          studentTypesCount.Etudiant,
+          studentTypesCount.Fonctionnaire,
+          studentTypesCount.Externe,
+        ],
+        backgroundColor: ['#E26D5C', '#5C7E8D', '#7CC1A1'], 
+        borderColor: ['#E26D5C', '#5C7E8D', '#7CC1A1'],
+        borderWidth: 1,
+
+      },
+    ],
+  };
+};

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import {
   getTotalStudents, getConfirmedRegistrations, getUnconfirmedRegistrations, getTotalGroups, getOngoingSessions, getEndedSessions, getUpcomingSessions,
   getTotalRooms, getTotalLevels, getGroupsByLevel, getStudentsPerSession, getStudentAgeDistribution, getTopActiveStudents, getMostFrequentGroup,
-  getMostPopularSession, getStudentsPerGroupChartData, getGroupsByLevelChartData
+  getMostPopularSession, getStudentsPerGroupChartData, getGroupsByLevelChartData,getStudentTypesCount
 } from "@/utils/index";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
@@ -20,8 +20,8 @@ const AdminPage = () => {
 
 
   const groupsByLevelChartData = getGroupsByLevelChartData();
-  const studentsPerGroupChartData = getStudentsPerGroupChartData();
 
+  const studentTypesChartData = getStudentTypesCount();
 
   const generateColors = (count) => {
     const colors = [];
@@ -166,31 +166,25 @@ const AdminPage = () => {
         </div>
 
 
- <div className="bg-white shadow-lg rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">Nombre d'étudiants par groupe</h3>
-          <Bar
-            data={{
-              labels: studentsPerGroupChartData.map(item => item.group_name),
-              datasets: [{
-                label: 'Étudiants par groupe',
-                data: studentsPerGroupChartData.map(item => item.students_count),
-                backgroundColor: generateColors(studentsPerGroupChartData.length),
-              }],
-            }}
-            options={{
-              responsive: true,
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Étudiants par groupe',
-                },
-                tooltip: {
-                  mode: 'index',
-                },
-              },
-            }}
-          />
-        </div>
+        <div className="bg-white shadow-lg rounded-lg p-6">
+  <h3 className="text-xl font-semibold mb-4">Répartition des étudiants par type</h3>
+  <Pie
+    data={getStudentTypesCount()} 
+    options={{
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Types d\'étudiants',
+        },
+        tooltip: {
+          mode: 'index',
+        },
+      },
+    }}
+  />
+</div>
+
       </div>
     </div>
   );
