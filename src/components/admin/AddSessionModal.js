@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { FaTimes, FaSave } from 'react-icons/fa'; 
 const AddSessionModal = ({ onClose, onSave }) => {
   const [formData, setFormData] = useState({
     session_name: '',
@@ -42,15 +42,18 @@ const AddSessionModal = ({ onClose, onSave }) => {
         "La date de fin d'inscription doit être après la date de début d'inscription.";
     }
 
-   /* if (
+    if (
       formData.registration_start_date &&
       formData.registration_end_date &&
-      (new Date(formData.registration_start_date) < new Date(formData.start_date) ||
-        new Date(formData.registration_end_date) > new Date(formData.end_date))
+      (
+        new Date(formData.registration_start_date) >= new Date(formData.end_date) ||  
+        new Date(formData.registration_end_date) >= new Date(formData.end_date) 
+      )
     ) {
       newErrors.registration_end_date =
-        "Les dates d'inscription doivent être à l'intérieur de la période de la session.";
-    }*/
+        "Les dates d'inscription doivent être avant la fin de la session.";
+    }
+    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -64,7 +67,15 @@ const AddSessionModal = ({ onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+  
+      <button
+        onClick={onClose}
+        className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+      >
+        <FaTimes size={24} />
+      </button>
+       
         <h2 className="text-xl font-bold mb-4">Ajouter une session</h2>
         <div className="space-y-4">
           <div>

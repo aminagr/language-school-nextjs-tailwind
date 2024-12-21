@@ -80,7 +80,7 @@ const EditRegistrationModal = ({ registration, onClose, onSave }) => {
         groupe: groupeName,
         nom_prenom: fullName,
         date,
-        confirme,  // Change ici: 'confirme' au lieu de 'etat'
+        confirme, 
       };
 
       onSave(updatedRegistration);

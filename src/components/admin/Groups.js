@@ -21,7 +21,7 @@ const Groups = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSession, setSelectedSession] = useState(''); 
   const [selectedLevel, setSelectedLevel] = useState(''); 
-  const itemsPerPage = 10;
+  const itemsPerPage = 30;
 
 
   useEffect(() => {

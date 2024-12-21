@@ -8,7 +8,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
   const [niveau, setNiveau] = useState('');
   const [groupe, setGroupe] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [confirme, setConfirme] = useState(false); // Logique de confirmation
+  const [confirme, setConfirme] = useState(false); 
   const [students, setStudents] = useState([]);
   const [sessionsData, setSessionsData] = useState([]);
   const [levelsData, setLevelsData] = useState([]);
@@ -62,7 +62,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
         groupe: groupeName,
         nom_prenom: fullName,
         date,
-        confirme, // Utilisation de la logique boolean
+        confirme, 
       };
 
       onSave(newRegistration);
@@ -73,13 +73,19 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
   };
 
   const handleMatriculeChange = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
     setMatricule(e.target.value);
-    setFilteredMatricules(
-      students.filter((student) =>
-        student.matricule.toLowerCase().includes(e.target.value.toLowerCase())
-      )
+  
+  
+    const filtered = students.filter((student) => 
+      student.matricule.toLowerCase().includes(searchTerm) ||
+      student.nom.toLowerCase().includes(searchTerm) ||
+      student.prenom.toLowerCase().includes(searchTerm)
     );
+  
+    setFilteredMatricules(filtered);
   };
+  
 
   const handleMatriculeSelect = (selectedMatricule) => {
     setMatricule(selectedMatricule);
@@ -96,7 +102,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </button>
         </div>
 
-        {/* Champ matricule */}
+  
         <div className="mb-4 relative">
           <input
             type="text"
@@ -120,7 +126,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           )}
         </div>
 
-        {/* Sélection de la session */}
+     
         <div className="mb-4">
           <select
             value={session}
@@ -136,7 +142,6 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-        {/* Sélection du niveau */}
         <div className="mb-4">
           <select
             value={niveau}
@@ -152,7 +157,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-        {/* Sélection du groupe */}
+
         <div className="mb-4">
           <select
             value={groupe}
@@ -168,7 +173,6 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-        {/* Sélection de la date */}
         <div className="mb-4">
           <label className="block text-sm">Date</label>
           <input
@@ -179,7 +183,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           />
         </div>
 
-        {/* Sélection de l'état de confirmation */}
+     
         <div className="mb-4">
           <label className="block text-sm">État</label>
           <select
@@ -192,23 +196,23 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-        {/* Boutons */}
         <div className="flex justify-between">
-          <button
-            onClick={handleSave}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-          >
-            <FaCheck className="mr-2" />
-            Enregistrer
-          </button>
-          <button
-            onClick={onClose}
-            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
-          >
-            <FaTimes className="mr-2" />
-            Annuler
-          </button>
-        </div>
+  <button
+    onClick={handleSave}
+    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center"
+  >
+    <FaCheck className="mr-2" />
+    Enregistrer
+  </button>
+  <button
+    onClick={onClose}
+    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center"
+  >
+    <FaTimes className="mr-2" />
+    Annuler
+  </button>
+</div>
+
       </div>
     </div>
   );

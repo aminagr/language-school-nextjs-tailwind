@@ -110,62 +110,65 @@ const Registrations = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-4">
-        <input
-          type="text"
-          placeholder="Rechercher un étudiant..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/3"
-        />
+<div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-4">
+  <input
+    type="text"
+    placeholder="Rechercher un étudiant..."
+    value={searchTerm}
+    onChange={(e) => {
+      setSearchTerm(e.target.value);
+      setCurrentPage(1);
+    }}
+    className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/3"
+  />
 
-        <select
-          value={selectedSession}
-          onChange={(e) => setSelectedSession(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/6"
-        >
-          <option value="">Toutes les sessions</option>
-          {sessions.map((session) => (
-            <option key={session.id} value={session.session_name}>
-              {session.session_name}
-            </option>
-          ))}
-        </select>
+  <select
+    value={selectedSession}
+    onChange={(e) => setSelectedSession(e.target.value)}
+    className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-2/6 lg:w-1/4" 
+  >
+    <option value="">Toutes les sessions</option>
+    {sessions.map((session) => (
+      <option key={session.id} value={session.session_name}>
+        {session.session_name}
+      </option>
+    ))}
+  </select>
 
-        <select
-          value={selectedLevel}
-          onChange={(e) => setSelectedLevel(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/6"
-        >
-          <option value="">Tous les niveaux</option>
-          {levels.map((level) => (
-            <option key={level.id} value={level.name}>
-              {level.name}
-            </option>
-          ))}
-        </select>
+  <select
+    value={selectedLevel}
+    onChange={(e) => setSelectedLevel(e.target.value)}
+    className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/6"
+  >
+    <option value="">Tous les niveaux</option>
+    {levels.map((level) => (
+      <option key={level.id} value={level.name}>
+        {level.name}
+      </option>
+    ))}
+  </select>
 
-        <select
-          value={selectedState}
-          onChange={(e) => setSelectedState(e.target.value)}
-          className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/6"
-        >
-          <option value="">Tous les états</option>
-          <option value="confirmé">Confirmé</option>
-          <option value="non confirmé">Non confirmé</option>
-        </select>
+  <select
+    value={selectedState}
+    onChange={(e) => setSelectedState(e.target.value)}
+    className="p-2 border border-gray-300 rounded-lg mb-4 sm:mb-0 sm:w-1/6"
+  >
+    <option value="">Tous les états</option>
+    <option value="confirmé">Confirmé</option>
+    <option value="non confirmé">Non confirmé</option>
+  </select>
 
-        <button
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mb-4 sm:mb-0"
-          onClick={() => setIsAddModalOpen(true)}
-        >
-          <FaPlus className="mr-2" />
-          Ajouter une inscription
-        </button>
-      </div>
+  <button
+  className="flex items-center px-3 py-2.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 mb-4 sm:mb-0 whitespace-nowrap w-auto"
+  onClick={() => setIsAddModalOpen(true)}
+>
+  <FaPlus className="mr-2" />
+  Ajouter une inscription
+</button>
+
+
+</div>
+
 
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-200">

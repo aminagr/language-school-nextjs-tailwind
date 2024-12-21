@@ -140,7 +140,7 @@ const AdminPage = () => {
       <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
     
         <div className="bg-white shadow-lg rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">Nombre groupes par niveau</h3>
+          <h3 className="text-xl font-semibold mb-4">Nombre de groupes par niveau</h3>
           <Pie
             data={{
               labels: groupsByLevelChartData.map(item => item.level_name),
@@ -155,7 +155,7 @@ const AdminPage = () => {
               plugins: {
                 title: {
                   display: true,
-                  text: 'Nombre des groupes par niveau',
+                  text: 'Nombre de groupes par niveau',
                 },
                 tooltip: {
                   mode: 'index',
@@ -167,7 +167,7 @@ const AdminPage = () => {
 
 
         <div className="bg-white shadow-lg rounded-lg p-6">
-  <h3 className="text-xl font-semibold mb-4">Répartition des étudiants par type</h3>
+  <h3 className="text-xl font-semibold mb-4">Nombre d'étudiants par type</h3>
   <Pie
     data={getStudentTypesCount()} 
     options={{
@@ -175,7 +175,7 @@ const AdminPage = () => {
       plugins: {
         title: {
           display: true,
-          text: 'Types d\'étudiants',
+          text: 'Types détudiants',
         },
         tooltip: {
           mode: 'index',
