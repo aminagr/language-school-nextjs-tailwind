@@ -14,7 +14,7 @@ const GroupPage = () => {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [confirmationFilter, setConfirmationFilter] = useState('confirmed');
+  const [confirmationFilter, setConfirmationFilter] = useState('all');
   const itemsPerPage = 10;
 
   const parsedGroupId = groupid ? parseInt(groupid) : null;
@@ -33,7 +33,6 @@ const GroupPage = () => {
     }
   }, [parsedGroupId, group]);
 
-  // Recherche par nom, prénom et matricule
   const filteredStudents = students
     .filter((student) => 
       `${student.nom} ${student.prenom} ${student.matricule}`
@@ -62,7 +61,6 @@ const GroupPage = () => {
     const doc = new jsPDF();
     const groupName = group ? group.group_name : 'Group';
   
-
     const confirmedStudents = filteredStudents.filter(student => student.confirme);
   
     doc.text(`Liste des étudiants confirmés - ${groupName}`, 14, 10);
@@ -73,7 +71,6 @@ const GroupPage = () => {
       student.matricule,
     ]);
   
-    // Create table
     doc.autoTable({
       head: [['Nom', 'Prénom', 'Matricule']],
       body: tableData,
@@ -90,7 +87,6 @@ const GroupPage = () => {
           <h1 className="text-4xl font-bold text-center text-blue-700">{group.group_name}</h1>
           <h2 className="text-lg text-center text-gray-500 mt-2">Liste des étudiants</h2>
 
-          {/* Champ de recherche et filtrage */}
           <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-4 gap-4">
             <div className="relative flex-1">
               <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
@@ -115,46 +111,43 @@ const GroupPage = () => {
                 <option value="unconfirmed">Non Confirmés</option>
               </select>
             </div>
+            {/* Button Imprimer */}
+            <button
+              onClick={generatePDF}
+              className="mt-4 md:mt-0 px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2"
+            >
+              <FaPrint />
+              Imprimer
+            </button>
           </div>
 
-          {/* Tableau des étudiants */}
-          <table className="w-full table-auto mt-4">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="px-4 py-2">Nom</th>
-                <th className="px-4 py-2">Prénom</th>
-                <th className="px-4 py-2">Matricule</th>
-                <th className="px-4 py-2">État d'inscription</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentStudents.map((student) => (
-                <tr key={student.matricule} className="border-b">
-                  <td className="px-4 py-2">{student.nom}</td>
-                  <td className="px-4 py-2">{student.prenom}</td>
-                  <td className="px-4 py-2">{student.matricule}</td>
-                  <td className="px-4 py-2">
-                    {student.confirme ? 'Confirmé' : 'Non Confirmé'}
-                  </td>
+          {/* Table with Horizontal Scroll */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto mt-4">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="px-4 py-2">Nom</th>
+                  <th className="px-4 py-2">Prénom</th>
+                  <th className="px-4 py-2">Matricule</th>
+                  <th className="px-4 py-2">État d'inscription</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentStudents.map((student) => (
+                  <tr key={student.matricule} className="border-b">
+                    <td className="px-4 py-2">{student.nom}</td>
+                    <td className="px-4 py-2">{student.prenom}</td>
+                    <td className="px-4 py-2">{student.matricule}</td>
+                    <td className="px-4 py-2">
+                      {student.confirme ? 'Confirmé' : 'Non Confirmé'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-          {/* Boutons */}
           <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
-            <div className="flex gap-4">
-              {/* Bouton imprimer */}
-              <button
-                onClick={generatePDF}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2"
-              >
-                <FaPrint />
-                Imprimer
-              </button>
-            </div>
-
-            {/* Pagination */}
             <div className="flex justify-center items-center gap-4">
               <button
                 onClick={handlePrevPage}
