@@ -192,63 +192,65 @@ export const fetchRegistrations = () => {
 
   const registrations = [
     {
-      id: 1, 
+      id: 1,
       matricule: students[0].matricule,
       nom_prenom: `${students[0].nom} ${students[0].prenom}`,
-      session: sessions[1].session_name, 
-      niveau: levels[1].name, 
-      groupe: groups[9].group_name, 
+      session: sessions[1].session_name,
+      niveau: levels[1].name,
+      groupe: groups[9].group_name,
       date: '2023-01-20',
-      etat: 'confirmé'
+      confirme: true
     },
     {
-      id: 2, 
+      id: 2,
       matricule: students[0].matricule,
       nom_prenom: `${students[0].nom} ${students[0].prenom}`,
-      session: sessions[2].session_name, 
-      niveau: levels[2].name, 
-      groupe: groups[5].group_name, 
+      session: sessions[2].session_name,
+      niveau: levels[2].name,
+      groupe: groups[5].group_name,
       date: '2023-01-20',
-      etat: 'non confirmé'
+      confirme: false
     },
     {
       id: 3,
       matricule: students[1].matricule,
       nom_prenom: `${students[1].nom} ${students[1].prenom}`,
-      session: sessions[2].session_name, 
-      niveau: levels[0].name, 
-      groupe: groups[0].group_name, 
+      session: sessions[2].session_name,
+      niveau: levels[0].name,
+      groupe: groups[0].group_name,
       date: '2023-01-20',
-      etat: 'non confirmé'
+      confirme: false
     }
   ];
 
-  return registrations; 
+  return registrations;
 };
+
+
 
 
 
 export const getStudentsByGroupId = (groupId) => {
   const registrations = fetchRegistrations();
   const students = fetchStudentsData();
-  const groups = fetchGroups(); // Déplacer cette ligne ici pour éviter des appels multiples
+  const groups = fetchGroups();
 
-  // Vérifier si le groupe existe
-  const group = groups.find(g => g.id === groupId);
+  const group = groups.find((g) => g.id === groupId);
   if (!group) {
-    return []; // Si le groupe n'est pas trouvé, on retourne un tableau vide
+    return [];
   }
 
-  // Trouver les inscriptions correspondant au groupe sélectionné
-  const groupRegistrations = registrations.filter(reg =>
-    reg.groupe === group.group_name
-  );
+  const groupRegistrations = registrations.filter((reg) => reg.groupe === group.group_name);
 
-  // Pour chaque inscription, récupérer le nom de l'étudiant
-  const studentNames = groupRegistrations.map(reg => {
-    const student = students.find(student => student.matricule === reg.matricule);
-    return `${student.nom} ${student.prenom}`;
+  const studentDetails = groupRegistrations.map((reg) => {
+    const student = students.find((student) => student.matricule === reg.matricule);
+    return {
+      nom: student.nom,
+      prenom: student.prenom,
+      matricule: student.matricule,
+      confirme: reg.confirme,  // Ajout de l'état de confirmation
+    };
   });
 
-  return studentNames;
+  return studentDetails;
 };

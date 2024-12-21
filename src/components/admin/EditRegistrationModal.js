@@ -8,7 +8,7 @@ const EditRegistrationModal = ({ registration, onClose, onSave }) => {
   const [niveau, setNiveau] = useState('');
   const [groupe, setGroupe] = useState('');
   const [date, setDate] = useState(registration.date || new Date().toISOString().slice(0, 10));
-  const [etat, setEtat] = useState(registration.etat || 'non confirmé');
+  const [confirme, setConfirme] = useState(registration.confirme || false);  // Change ici: 'confirme' au lieu de 'etat'
   const [students, setStudents] = useState([]);
   const [sessionsData, setSessionsData] = useState([]);
   const [levelsData, setLevelsData] = useState([]);
@@ -30,7 +30,7 @@ const EditRegistrationModal = ({ registration, onClose, onSave }) => {
         setLevelsData(levels);
         setGroupsData(groups);
 
-        // Initialiser les valeurs de niveau et de groupe
+        
         if (registration.niveau && registration.groupe) {
           const initialLevel = levels.find((lvl) => lvl.name === registration.niveau);
           const initialGroup = groups.find((grp) => grp.group_name === registration.groupe);
@@ -80,7 +80,7 @@ const EditRegistrationModal = ({ registration, onClose, onSave }) => {
         groupe: groupeName,
         nom_prenom: fullName,
         date,
-        etat,
+        confirme,  // Change ici: 'confirme' au lieu de 'etat'
       };
 
       onSave(updatedRegistration);
@@ -166,8 +166,8 @@ const EditRegistrationModal = ({ registration, onClose, onSave }) => {
 
         <div className="mb-4">
           <select
-            value={etat}
-            onChange={(e) => setEtat(e.target.value)}
+            value={confirme ? 'confirmé' : 'non confirmé'}  
+            onChange={(e) => setConfirme(e.target.value === 'confirmé')}  
             className="p-2 border border-gray-300 rounded-lg w-full"
           >
             <option value="confirmé">Confirmé</option>

@@ -5,10 +5,10 @@ import { fetchStudentsData, fetchSessionsData, fetchLevelsData, fetchGroups } fr
 const AddRegistrationModal = ({ onClose, onSave }) => {
   const [matricule, setMatricule] = useState('');
   const [session, setSession] = useState('');
-  const [niveau, setNiveau] = useState('');  
-  const [groupe, setGroupe] = useState('');   
+  const [niveau, setNiveau] = useState('');
+  const [groupe, setGroupe] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [etat, setEtat] = useState('non confirmé'); 
+  const [confirme, setConfirme] = useState(false); // Logique de confirmation
   const [students, setStudents] = useState([]);
   const [sessionsData, setSessionsData] = useState([]);
   const [levelsData, setLevelsData] = useState([]);
@@ -29,7 +29,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
       setGroupsData(groups);
 
       setSession(sessions[sessions.length - 1]?.session_name || '');
-      setNiveau(levels[0]?.id || ''); 
+      setNiveau(levels[0]?.id || '');
     };
 
     fetchData();
@@ -50,26 +50,21 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
 
   const handleSave = () => {
     if (matricule && session && niveau && groupe) {
-     
       const niveauName = levelsData.find((lvl) => lvl.id === parseInt(niveau))?.name;
-    
       const groupeName = filteredGroups.find((grp) => grp.id === parseInt(groupe))?.group_name;
-  
-  
       const student = students.find((stu) => stu.matricule === matricule);
-      const fullName = `${student?.nom} ${student?.prenom}`;  
-  
-     
+      const fullName = `${student?.nom} ${student?.prenom}`;
+
       const newRegistration = {
         matricule,
         session,
-        niveau: niveauName,  
-        groupe: groupeName,   
-        nom_prenom: fullName,  
+        niveau: niveauName,
+        groupe: groupeName,
+        nom_prenom: fullName,
         date,
-        etat, 
+        confirme, // Utilisation de la logique boolean
       };
-  
+
       onSave(newRegistration);
       onClose();
     } else {
@@ -79,7 +74,6 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
 
   const handleMatriculeChange = (e) => {
     setMatricule(e.target.value);
-   
     setFilteredMatricules(
       students.filter((student) =>
         student.matricule.toLowerCase().includes(e.target.value.toLowerCase())
@@ -102,7 +96,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </button>
         </div>
 
-   
+        {/* Champ matricule */}
         <div className="mb-4 relative">
           <input
             type="text"
@@ -126,6 +120,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           )}
         </div>
 
+        {/* Sélection de la session */}
         <div className="mb-4">
           <select
             value={session}
@@ -141,7 +136,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-  
+        {/* Sélection du niveau */}
         <div className="mb-4">
           <select
             value={niveau}
@@ -157,7 +152,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-       
+        {/* Sélection du groupe */}
         <div className="mb-4">
           <select
             value={groupe}
@@ -173,7 +168,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-
+        {/* Sélection de la date */}
         <div className="mb-4">
           <label className="block text-sm">Date</label>
           <input
@@ -184,12 +179,12 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           />
         </div>
 
-     
+        {/* Sélection de l'état de confirmation */}
         <div className="mb-4">
           <label className="block text-sm">État</label>
           <select
-            value={etat}
-            onChange={(e) => setEtat(e.target.value)}
+            value={confirme ? 'confirmé' : 'non confirmé'}
+            onChange={(e) => setConfirme(e.target.value === 'confirmé')}
             className="p-2 border border-gray-300 rounded-lg w-full"
           >
             <option value="non confirmé">Non confirmé</option>
@@ -197,7 +192,7 @@ const AddRegistrationModal = ({ onClose, onSave }) => {
           </select>
         </div>
 
-     
+        {/* Boutons */}
         <div className="flex justify-between">
           <button
             onClick={handleSave}

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';   
+import React, { useState, useEffect } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaChevronLeft, FaChevronRight, FaCheck } from 'react-icons/fa';
 import { fetchRegistrations, fetchSessionsData, fetchLevelsData } from '@/utils';
 import AddRegistrationModal from './AddRegistrationModal';
 import EditRegistrationModal from './EditRegistrationModal';
 import DeleteRegistrationModal from './DeleteRegistrationModal';
+
 const Registrations = () => {
   const [registrations, setRegistrations] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -19,6 +20,7 @@ const Registrations = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingRegistration, setEditingRegistration] = useState(null);
   const [deletingRegistration, setDeletingRegistration] = useState(null);
+
   useEffect(() => {
     const loadInitialData = async () => {
       const fetchedRegistrations = await fetchRegistrations();
@@ -60,10 +62,12 @@ const Registrations = () => {
     );
     setIsEditModalOpen(false);
   };
+
   const handleOpenDeleteModal = (registration) => {
     setDeletingRegistration(registration);
     setIsDeleteModalOpen(true);
   };
+
   const handleDeleteRegistration = () => {
     setRegistrations((prevRegistrations) =>
       prevRegistrations.filter((reg) => reg.id !== deletingRegistration.id)
@@ -75,7 +79,7 @@ const Registrations = () => {
   const handleConfirmRegistration = (registration) => {
     setRegistrations((prevRegistrations) =>
       prevRegistrations.map((reg) =>
-        reg.id === registration.id ? { ...reg, etat: 'confirmé' } : reg
+        reg.id === registration.id ? { ...reg, confirme: true } : reg
       )
     );
   };
@@ -85,7 +89,7 @@ const Registrations = () => {
       registration.nom_prenom?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
     const matchesSession = selectedSession ? registration.session === selectedSession : true;
     const matchesLevel = selectedLevel ? registration.niveau === selectedLevel : true;
-    const matchesState = selectedState ? registration.etat === selectedState : true;
+    const matchesState = selectedState ? (selectedState === 'confirmé' ? registration.confirme === true : registration.confirme === false) : true;
     return matchesSearch && matchesSession && matchesLevel && matchesState;
   });
 
@@ -187,7 +191,9 @@ const Registrations = () => {
                 <td className="px-4 py-2 border">{registration.niveau}</td>
                 <td className="px-4 py-2 border">{registration.groupe}</td>
                 <td className="px-4 py-2 border">{registration.date}</td>
-                <td className="px-4 py-2 border">{registration.etat}</td>
+                <td className="px-4 py-2 border">
+                  {registration.confirme ? 'Confirmé' : 'Non confirmé'}
+                </td>
                 <td className="px-4 py-2 border flex items-center">
                   <button
                     onClick={() => handleEditRegistration(registration)}
@@ -201,7 +207,7 @@ const Registrations = () => {
                   >
                     <FaTrash />
                   </button>
-                  {registration.etat !== 'confirmé' && (
+                  {registration.confirme === false && (
                     <button
                       onClick={() => handleConfirmRegistration(registration)}
                       className="text-green-500 hover:text-green-600"
@@ -228,10 +234,7 @@ const Registrations = () => {
         </button>
       </div>
 
-      {isAddModalOpen && (
-        <AddRegistrationModal onClose={() => setIsAddModalOpen(false)} onSave={handleAddRegistration} />
-      )}
-
+      {isAddModalOpen && <AddRegistrationModal onClose={() => setIsAddModalOpen(false)} onSave={handleAddRegistration} />}
       {isEditModalOpen && (
         <EditRegistrationModal
           registration={editingRegistration}
@@ -239,15 +242,15 @@ const Registrations = () => {
           onSave={handleSaveEditedRegistration}
         />
       )}
- 
-{isDeleteModalOpen && deletingRegistration && (
-  <DeleteRegistrationModal
-    registrationName={deletingRegistration.nom_prenom}
-    onClose={() => setIsDeleteModalOpen(false)}
-    onDelete={handleDeleteRegistration}
-  />
-)}
-</div>
-);
+      {isDeleteModalOpen && (
+        <DeleteRegistrationModal
+          registration={deletingRegistration}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onDelete={handleDeleteRegistration}
+        />
+      )}
+    </div>
+  );
 };
+
 export default Registrations;

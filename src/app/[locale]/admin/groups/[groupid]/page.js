@@ -1,21 +1,27 @@
-'use client'
+'use client';
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
 import { getStudentsByGroupId, fetchGroups } from '@/utils/index';
-import { FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaSearch, FaPrint } from 'react-icons/fa';
+import { jsPDF } from 'jspdf';
+import "jspdf-autotable"; 
 import Link from 'next/link';
-import { useLocale } from 'next-intl'; 
+import { useLocale } from 'next-intl';
 
 const GroupPage = () => {
   const { groupid } = useParams();
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [confirmationFilter, setConfirmationFilter] = useState('confirmed');
   const itemsPerPage = 10;
 
   const parsedGroupId = groupid ? parseInt(groupid) : null;
-  const group = useMemo(() => fetchGroups().find(group => group.id === parsedGroupId), [parsedGroupId]);
+  const group = useMemo(
+    () => fetchGroups().find((group) => group.id === parsedGroupId),
+    [parsedGroupId]
+  );
   const locale = useLocale();
 
   useEffect(() => {
@@ -27,9 +33,16 @@ const GroupPage = () => {
     }
   }, [parsedGroupId, group]);
 
-  const filteredStudents = students.filter((student) =>
-    student.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Recherche par nom, prénom et matricule
+  const filteredStudents = students
+    .filter((student) => 
+      `${student.nom} ${student.prenom} ${student.matricule}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    .filter((student) => 
+      confirmationFilter === 'all' || (confirmationFilter === 'confirmed' && student.confirme) || (confirmationFilter === 'unconfirmed' && !student.confirme)
+    );
 
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
   const currentStudents = filteredStudents.slice(
@@ -45,79 +58,122 @@ const GroupPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
-      {group ? (
-        <>
-          <h1 className="text-3xl font-semibold text-blue-600 text-center">{group.group_name}</h1>
-          <h2 className="text-xl font-semibold mb-4 text-center text-gray-600">Étudiants inscrits</h2>
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const groupName = group ? group.group_name : 'Group';
+  
 
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center space-x-2">
-              <FaSearch className="text-gray-600" />
+    const confirmedStudents = filteredStudents.filter(student => student.confirme);
+  
+    doc.text(`Liste des étudiants confirmés - ${groupName}`, 14, 10);
+  
+    const tableData = confirmedStudents.map((student) => [
+      student.nom,
+      student.prenom,
+      student.matricule,
+    ]);
+  
+    // Create table
+    doc.autoTable({
+      head: [['Nom', 'Prénom', 'Matricule']],
+      body: tableData,
+      startY: 20,
+    });
+  
+    doc.save(`${groupName}.pdf`);
+  };
+  
+  return (
+    <div className="p-8 bg-gray-50 min-h-screen">
+      {group ? (
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6">
+          <h1 className="text-4xl font-bold text-center text-blue-700">{group.group_name}</h1>
+          <h2 className="text-lg text-center text-gray-500 mt-2">Liste des étudiants</h2>
+
+          {/* Champ de recherche et filtrage */}
+          <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-4 gap-4">
+            <div className="relative flex-1">
+              <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                <FaSearch />
+              </span>
               <input
                 type="text"
-                placeholder="Rechercher un étudiant..."
+                placeholder="Rechercher par nom, prénom ou matricule..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="p-2 border border-gray-300 rounded-lg w-full sm:w-2/5"
+                className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 w-full"
               />
+            </div>
+            <div className="md:w-1/3">
+              <select
+                value={confirmationFilter}
+                onChange={(e) => setConfirmationFilter(e.target.value)}
+                className="p-2 border rounded-md w-full"
+              >
+                <option value="all">Tous</option>
+                <option value="confirmed">Confirmés</option>
+                <option value="unconfirmed">Non Confirmés</option>
+              </select>
             </div>
           </div>
 
-          <div className="overflow-x-auto mb-6">
-            <table className="min-w-full table-auto border border-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-4 py-2 border text-sm font-medium text-gray-700">Nom de l'étudiant</th>
-                  <th className="px-4 py-2 border text-sm font-medium text-gray-700">Actions</th>
+          {/* Tableau des étudiants */}
+          <table className="w-full table-auto mt-4">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="px-4 py-2">Nom</th>
+                <th className="px-4 py-2">Prénom</th>
+                <th className="px-4 py-2">Matricule</th>
+                <th className="px-4 py-2">État d'inscription</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentStudents.map((student) => (
+                <tr key={student.matricule} className="border-b">
+                  <td className="px-4 py-2">{student.nom}</td>
+                  <td className="px-4 py-2">{student.prenom}</td>
+                  <td className="px-4 py-2">{student.matricule}</td>
+                  <td className="px-4 py-2">
+                    {student.confirme ? 'Confirmé' : 'Non Confirmé'}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {currentStudents.length > 0 ? (
-                  currentStudents.map((student, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border text-gray-700">{student}</td>
-                      <td className="px-4 py-2 border text-center">
-                        <Link href={`/${locale}/admin/groups/${group.id}`} className="text-blue-500 hover:text-blue-700">
-                          Détails
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="2" className="px-4 py-2 text-center text-red-500">
-                      Aucun étudiant inscrit dans ce groupe.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
 
-          <div className="flex justify-between items-center">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50"
-            >
-              <FaChevronLeft />
-            </button>
-            <span className="text-gray-700">
-              Page {currentPage} sur {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50"
-            >
-              <FaChevronRight />
-            </button>
+          {/* Boutons */}
+          <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
+            <div className="flex gap-4">
+              {/* Bouton imprimer */}
+              <button
+                onClick={generatePDF}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2"
+              >
+                <FaPrint />
+                Imprimer
+              </button>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex justify-center items-center gap-4">
+              <button
+                onClick={handlePrevPage}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+              >
+                <FaChevronLeft />
+              </button>
+              <span className="text-lg">{`${currentPage} / ${totalPages}`}</span>
+              <button
+                onClick={handleNextPage}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+              >
+                <FaChevronRight />
+              </button>
+            </div>
           </div>
-        </>
+        </div>
       ) : (
-        <p className="text-center text-red-500 font-semibold text-xl mt-8">Le groupe n'a pas été trouvé.</p>
+        <p>Groupe non trouvé</p>
       )}
     </div>
   );

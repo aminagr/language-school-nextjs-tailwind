@@ -1,12 +1,10 @@
-import React from 'react';
-
-const DeleteRegistrationModal = ({ registrationName, onClose, onDelete }) => {
+const DeleteRegistrationModal = ({ registration, onClose, onDelete }) => {
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
         <h2 className="text-xl font-semibold mb-4">Supprimer l'inscription</h2>
         <p>
-          Êtes-vous sûr de vouloir supprimer l'inscription de "{registrationName}" ?
+          Êtes-vous sûr de vouloir supprimer l'inscription de "{registration?.nom_prenom}" ?
         </p>
         <div className="flex justify-between mt-4">
           <button
