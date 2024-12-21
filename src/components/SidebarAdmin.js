@@ -27,7 +27,7 @@ const SidebarAdmin = () => {
   };
 
   const handleLinkClick = () => {
-    setIsOpen(false); // Fermer la sidebar après avoir cliqué sur un lien
+    setIsOpen(false); 
   };
 
   const handleLogoutClick = () => {
@@ -156,26 +156,7 @@ const SidebarAdmin = () => {
           </li>
 
 
-          <li>
-            <Link
-              href={`/${locale}/admin/settings`}
-              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
-              onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
-            >
-              <FaCogs className="mr-3 text-xl" />
-              <span className="text-lg">Paramètres</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href={`/${locale}/admin/admins`}
-              className="flex items-center py-2 px-4 rounded-lg hover:bg-gray-700 transition-all"
-              onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
-            >
-              <FaUsersCog className="mr-3 text-xl" />
-              <span className="text-lg">Admins</span>
-            </Link>
-          </li>
+      
         </ul>
 
         <div className="my-8 border-t border-gray-600"></div>

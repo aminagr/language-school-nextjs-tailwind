@@ -43,7 +43,10 @@ const GroupPage = () => {
       confirmationFilter === 'all' || (confirmationFilter === 'confirmed' && student.confirme) || (confirmationFilter === 'unconfirmed' && !student.confirme)
     );
 
-  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+
+  const filteredCount = filteredStudents.length;
+
+  const totalPages = Math.ceil(filteredCount / itemsPerPage);
   const currentStudents = filteredStudents.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -63,19 +66,12 @@ const GroupPage = () => {
     const groupLevel = group ? group.level : 'Niveau';
     const sessionName = group ? group.session_name : 'Session';
     
-    // Afficher les informations du groupe en haut du PDF
-
-
     doc.text(`${sessionName}`, 14, 10);
     doc.text(`${groupLevel}`, 14, 15);
     doc.text(`${groupName}`, 14, 20);
     const confirmedStudents = filteredStudents.filter(student => student.confirme);
 
-    // Ajouter le titre de la liste des étudiants
-    //doc.text(`Liste des étudiants confirmés - ${groupName}`, 14, 30);
-
     const tableData = confirmedStudents.map((student) => [
-    
       student.matricule,  `${student.nom} ${student.prenom}`
     ]);
 
@@ -94,9 +90,16 @@ const GroupPage = () => {
       {group ? (
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6">
           <h1 className="text-4xl font-bold text-center text-blue-700">{group.group_name}</h1>
-          <h2 className="text-lg text-center text-gray-500 mt-2"> {group.level}</h2>
-          <h2 className="text-lg text-center text-gray-500 mt-2"> {group.session_name}</h2>
-          <h2 className="text-lg text-center text-gray-500 mt-2">Liste des étudiants</h2>
+          <h2 className="text-lg text-center text-gray-500 mt-2">{group.level}</h2>
+          <h2 className="text-lg text-center text-gray-500 mt-2">{group.session_name}</h2>
+    
+
+        
+          <div className="text-center text-lg font-medium text-gray-500 mt-2">
+            {confirmationFilter === 'all' && `Nombre total d'étudiants : ${filteredCount}`}
+            {confirmationFilter === 'confirmed' && `Nombre d'étudiants confirmés : ${filteredCount}`}
+            {confirmationFilter === 'unconfirmed' && `Nombre d'étudiants non confirmés : ${filteredCount}`}
+          </div>
 
           <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-4 gap-4">
             <div className="relative flex-1">
@@ -122,7 +125,6 @@ const GroupPage = () => {
                 <option value="unconfirmed">Non Confirmés</option>
               </select>
             </div>
-            {/* Button Imprimer */}
             <button
               onClick={generatePDF}
               className="mt-4 md:mt-0 px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2"
@@ -137,7 +139,7 @@ const GroupPage = () => {
             <table className="min-w-full table-auto mt-4">
               <thead>
                 <tr className="bg-gray-100">
-                <th className="px-4 py-2">Matricule</th>
+                  <th className="px-4 py-2">Matricule</th>
                   <th className="px-4 py-2">Nom et Prénom</th>
                   <th className="px-4 py-2">État d'inscription</th>
                 </tr>
@@ -145,14 +147,12 @@ const GroupPage = () => {
               <tbody>
                 {currentStudents.map((student) => (
                   <tr key={student.matricule} className="border-b">
-                        <td className="px-4 py-2">{student.matricule}</td>
-                   <td className="px-4 py-2">
-  <Link href={`/${locale}/admin/students/${student.id}`} className="text-blue-600 hover:underline">
-    {`${student.nom} ${student.prenom}`}
-  </Link>
-</td>
-
-                
+                    <td className="px-4 py-2">{student.matricule}</td>
+                    <td className="px-4 py-2">
+                      <Link href={`/${locale}/admin/students/${student.id}`} className="text-blue-600 hover:underline">
+                        {`${student.nom} ${student.prenom}`}
+                      </Link>
+                    </td>
                     <td className="px-4 py-2">
                       {student.confirme ? 'Confirmé' : 'Non Confirmé'}
                     </td>
