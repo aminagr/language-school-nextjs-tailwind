@@ -15,7 +15,7 @@ const GroupPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [confirmationFilter, setConfirmationFilter] = useState('all');
-  const itemsPerPage = 10;
+  const itemsPerPage = 30;
 
   const parsedGroupId = groupid ? parseInt(groupid) : null;
   const group = useMemo(
@@ -66,13 +66,12 @@ const GroupPage = () => {
     doc.text(`Liste des étudiants confirmés - ${groupName}`, 14, 10);
   
     const tableData = confirmedStudents.map((student) => [
-      student.nom,
-      student.prenom,
+      `${student.nom} ${student.prenom}`, 
       student.matricule,
     ]);
   
     doc.autoTable({
-      head: [['Nom', 'Prénom', 'Matricule']],
+      head: [['Nom et Prénom', 'Matricule']],
       body: tableData,
       startY: 20,
     });
@@ -126,8 +125,7 @@ const GroupPage = () => {
             <table className="min-w-full table-auto mt-4">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="px-4 py-2">Nom</th>
-                  <th className="px-4 py-2">Prénom</th>
+                  <th className="px-4 py-2">Nom et Prénom</th>
                   <th className="px-4 py-2">Matricule</th>
                   <th className="px-4 py-2">État d'inscription</th>
                 </tr>
@@ -135,8 +133,12 @@ const GroupPage = () => {
               <tbody>
                 {currentStudents.map((student) => (
                   <tr key={student.matricule} className="border-b">
-                    <td className="px-4 py-2">{student.nom}</td>
-                    <td className="px-4 py-2">{student.prenom}</td>
+                   <td className="px-4 py-2">
+  <Link href={`/${locale}/admin/students/${student.id}`} className="text-blue-600 hover:underline">
+    {`${student.nom} ${student.prenom}`}
+  </Link>
+</td>
+
                     <td className="px-4 py-2">{student.matricule}</td>
                     <td className="px-4 py-2">
                       {student.confirme ? 'Confirmé' : 'Non Confirmé'}
@@ -147,22 +149,24 @@ const GroupPage = () => {
             </table>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
-            <div className="flex justify-center items-center gap-4">
-              <button
-                onClick={handlePrevPage}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-              >
-                <FaChevronLeft />
-              </button>
-              <span className="text-lg">{`${currentPage} / ${totalPages}`}</span>
-              <button
-                onClick={handleNextPage}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-              >
-                <FaChevronRight />
-              </button>
-            </div>
+          <div className="flex justify-between items-center mt-4">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+            >
+              <FaChevronLeft />
+            </button>
+            <span>
+              Page {currentPage} sur {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+            >
+              <FaChevronRight />
+            </button>
           </div>
         </div>
       ) : (

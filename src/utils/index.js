@@ -5,6 +5,7 @@ export const fetchLevelsData = () => [
   { id: 2, name: 'Niveau 2' },
   { id: 3, name: 'Niveau 3' },
   { id: 4, name: 'Niveau 4' },
+
 ];
 
 export const fetchRoomsData = () => [
@@ -51,7 +52,7 @@ export const fetchGroups = () => {
   return [
     {
       id: 1,
-      group_name: 'Groupe A',
+      group_name: 'Groupe 1',
       level: levels.find(level => level.id === 1)?.name,
       sessions_per_week: 2,
       sessions: [
@@ -62,7 +63,7 @@ export const fetchGroups = () => {
     },
     {
       id: 2,
-      group_name: 'Groupe B',
+      group_name: 'Groupe 1',
       level: levels.find(level => level.id === 2)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -72,7 +73,7 @@ export const fetchGroups = () => {
     },
     {
       id: 3,
-      group_name: 'Groupe C',
+      group_name: 'Groupe 2',
       level: levels.find(level => level.id === 1)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -82,7 +83,7 @@ export const fetchGroups = () => {
     },
     {
       id: 4,
-      group_name: 'Groupe D',
+      group_name: 'Groupe 2',
       level: levels.find(level => level.id === 2)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -92,7 +93,7 @@ export const fetchGroups = () => {
     },
     {
       id: 5,
-      group_name: 'Groupe E',
+      group_name: 'Groupe 1',
       level: levels.find(level => level.id === 4)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -102,7 +103,7 @@ export const fetchGroups = () => {
     },
     {
       id: 6,
-      group_name: 'Groupe F',
+      group_name: 'Groupe 1',
       level: levels.find(level => level.id === 3)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -112,7 +113,7 @@ export const fetchGroups = () => {
     },
     {
       id: 7,
-      group_name: 'Groupe l',
+      group_name: 'Groupe 3',
       level: levels.find(level => level.id === 1)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -122,7 +123,7 @@ export const fetchGroups = () => {
     },
     {
       id: 8,
-      group_name: 'Groupe M',
+      group_name: 'Groupe 4',
       level: levels.find(level => level.id === 1)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -132,7 +133,7 @@ export const fetchGroups = () => {
     },
     {
       id: 9,
-      group_name: 'Groupe N',
+      group_name: 'Groupe 3',
       level: levels.find(level => level.id === 2)?.name,
       sessions_per_week: 1,
       sessions: [
@@ -142,14 +143,15 @@ export const fetchGroups = () => {
     },
     {
       id: 10,
-      group_name: 'Groupe O',
+      group_name: 'Groupe 4',
       level: levels.find(level => level.id === 2)?.name,
       sessions_per_week: 1,
       sessions: [
         { day: 'Mardi', start_time: '16:00', end_time: '18:00', room_name: rooms.find(room => room.id === 6)?.name },
       ],
-      session_name: sessions.find(session => session.id === 2)?.session_name,
+      session_name: sessions.find(session => session.id === 3)?.session_name,
     },
+    
   ];
 };
 
@@ -276,7 +278,7 @@ export const fetchStudentsData = () => {
       type: 'Externe'
     },
     {
-      id: 10,
+      id: 11,
       matricule: '299999',
       nom: 'Amina',
       prenom: 'Ameur',
@@ -414,6 +416,7 @@ export const fetchRegistrations = () => {
 
 
 
+
 export const getStudentsByGroupId = (groupId) => {
   const registrations = fetchRegistrations();
   const students = fetchStudentsData();
@@ -429,6 +432,7 @@ export const getStudentsByGroupId = (groupId) => {
   const studentDetails = groupRegistrations.map((reg) => {
     const student = students.find((student) => student.matricule === reg.matricule);
     return {
+      id: student.id,
       nom: student.nom,
       prenom: student.prenom,
       matricule: student.matricule,
@@ -440,82 +444,145 @@ export const getStudentsByGroupId = (groupId) => {
 };
 
 
+// src/utils/index.js
+
+export const fetchStudentById = (id) => {
+  // Récupération des données des étudiants
+  const students = fetchStudentsData();
+  const groups = fetchGroups();
+  const sessions = fetchSessionsData();
+  const levels = fetchLevelsData();
+  const rooms = fetchRoomsData();
+  
+  // Recherche de l'étudiant par son ID
+  const student = students.find(student => student.id === id);
+  
+  // Si l'étudiant existe, récupérer les autres informations associées
+  if (student) {
+    const registrations = fetchRegistrations().filter(reg => reg.matricule === student.matricule);
+    const studentGroups = registrations.map(reg => {
+      const group = groups.find(g => g.group_name === reg.groupe);
+      const session = sessions.find(s => s.session_name === reg.session);
+      const level = levels.find(l => l.name === reg.niveau);
+      return {
+        group_name: group?.group_name,
+        session_name: session?.session_name,
+        level_name: level?.name,
+        confirmed: reg.confirme
+      };
+    });
+    
+    return {
+      id: student.id,
+      matricule: student.matricule,
+      nom: student.nom,
+      prenom: student.prenom,
+      date_naissance: student.date_naissance,
+      lieu_naissance: student.lieu_naissance,
+      adresse: student.adresse,
+      telephone: student.telephone,
+      mail: student.mail,
+      type: student.type,
+      groups: studentGroups
+    };
+  }
+  
+  
+  return null;
+};
+
+
+
+
+export const fetchLatestSession = () => {
+  const sessions = fetchSessionsData();
+
+  return sessions.sort((a, b) => new Date(b.start_date) - new Date(a.start_date))[0];
+};
+
+
+export const fetchGroupsForLatestSession = () => {
+  const latestSession = fetchLatestSession();
+  const groups = fetchGroups();
+
+  return groups.filter(group => group.session_name === latestSession.session_name);
+};
+
+
 export const getTotalRooms = () => {
   const rooms = fetchRoomsData();
   return rooms.length;
 };
 
+export const getTotalGroups = () => {
+  const groups = fetchGroupsForLatestSession();
+  return groups.length;
+};
 
-
-// Total number of students
 export const getTotalStudents = () => {
   const students = fetchStudentsData();
   return students.length;
 };
 
-// Number of confirmed registrations
-export const getConfirmedRegistrations = () => {
-  const registrations = fetchRegistrations();
-  return registrations.filter(reg => reg.confirme).length;
-};
-
-// Number of unconfirmed registrations
-export const getUnconfirmedRegistrations = () => {
-  const registrations = fetchRegistrations();
-  return registrations.filter(reg => !reg.confirme).length;
-};
-
-// Total number of groups
-export const getTotalGroups = () => {
-  const groups = fetchGroups();
-  return groups.length;
-};
-
-// Total number of sessions
-export const getTotalSessions = () => {
-  const sessions = fetchSessionsData();
-  return sessions.length;
-};
-
-// Number of sessions that are ongoing
-export const getOngoingSessions = () => {
-  const sessions = fetchSessionsData();
-  const today = new Date().toISOString().split('T')[0];
-  return sessions.filter(session => session.start_date <= today && session.end_date >= today).length;
-};
-
-// Number of sessions that have ended
-export const getEndedSessions = () => {
-  const sessions = fetchSessionsData();
-  const today = new Date().toISOString().split('T')[0];
-  return sessions.filter(session => session.end_date < today).length;
-};
-
-// Number of sessions that have not started yet
-export const getUpcomingSessions = () => {
-  const sessions = fetchSessionsData();
-  const today = new Date().toISOString().split('T')[0];
-  return sessions.filter(session => session.start_date > today).length;
-};
-
-// Total number of levels
 export const getTotalLevels = () => {
   const levels = fetchLevelsData();
   return levels.length;
 };
 
 
+export const getConfirmedRegistrations = () => {
+  const latestSession = fetchLatestSession();
+  const registrations = fetchRegistrations();
+  return registrations.filter(reg => reg.session === latestSession.session_name && reg.confirme).length;
+};
+
+export const getUnconfirmedRegistrations = () => {
+  const latestSession = fetchLatestSession();
+  const registrations = fetchRegistrations();
+  return registrations.filter(reg => reg.session === latestSession.session_name && !reg.confirme).length;
+}; 
+
+
+
+export const getTotalSessions = () => {
+  const sessions = fetchSessionsData();
+  return sessions.length;
+};
+
+
+export const getOngoingSessions = () => {
+  const sessions = fetchSessionsData();
+  const today = new Date().toISOString().split('T')[0];
+  return sessions.filter(session => session.start_date <= today && session.end_date >= today).length;
+};
+
+export const getEndedSessions = () => {
+  const sessions = fetchSessionsData();
+  const today = new Date().toISOString().split('T')[0];
+  return sessions.filter(session => session.end_date < today).length;
+};
+
+
+export const getUpcomingSessions = () => {
+  const sessions = fetchSessionsData();
+  const today = new Date().toISOString().split('T')[0];
+  return sessions.filter(session => session.start_date > today).length;
+};
+
+
+
+
 
 // Average number of students per group
 export const getAvgStudentsPerGroup = () => {
-  const groups = fetchGroups();
+  const groups = fetchGroupsForLatestSession();
   const totalStudents = groups.reduce((sum, group) => sum + getStudentsByGroupId(group.id).length, 0);
   return totalStudents / groups.length;
 };
 
 // Number of groups by level
 export const getGroupsByLevel = () => {
-  const groups = fetchGroups();
+  const groups = fetchGroupsForLatestSession();
   const levels = fetchLevelsData();
   const groupsByLevel = levels.map(level => ({
     levelName: level.name,
@@ -605,7 +672,7 @@ export const getAvgAgeOfStudents = () => {
 
 // Most frequent group
 export const getMostFrequentGroup = () => {
-  const groups = fetchGroups();
+  const groups = fetchGroupsForLatestSession();
   const groupNames = groups.map(group => group.group_name);
   const groupCount = groupNames.reduce((acc, groupName) => {
     acc[groupName] = (acc[groupName] || 0) + 1;
@@ -628,7 +695,7 @@ export const getMostPopularSession = () => {
 };
 
 export const getStudentsPerGroupChartData = () => {
-  const groups = fetchGroups();
+  const groups = fetchGroupsForLatestSession();
   return groups.map(group => ({
     group_name: group.group_name,
     students_count: getStudentsByGroupId(group.id).length,
@@ -642,6 +709,7 @@ export const getRegistrationsStatusChartData = () => {
     { status: 'Unconfirmed', count: unconfirmed },
   ];
 };
+
 export const getGroupsByLevelChartData = () => {
   const groupsByLevel = getGroupsByLevel();
   return groupsByLevel.map(item => ({
@@ -653,8 +721,8 @@ export const getGroupsByLevelChartData = () => {
 export const getEnrollmentOverTimeChartData = () => {
   const registrations = fetchRegistrations();
   const data = registrations.reduce((acc, reg) => {
-    const date = reg.date.split('T')[0]; // Get the date part
-    acc[date] = (acc[date] || 0) + 1; // Count registrations per date
+    const date = reg.date.split('T')[0]; 
+    acc[date] = (acc[date] || 0) + 1; 
     return acc;
   }, {});
 

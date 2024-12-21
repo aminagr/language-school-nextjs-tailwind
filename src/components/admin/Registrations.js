@@ -22,6 +22,7 @@ const Registrations = () => {
   const [deletingRegistration, setDeletingRegistration] = useState(null);
 
   useEffect(() => {
+ 
     const loadInitialData = async () => {
       const fetchedRegistrations = await fetchRegistrations();
       setRegistrations(fetchedRegistrations);

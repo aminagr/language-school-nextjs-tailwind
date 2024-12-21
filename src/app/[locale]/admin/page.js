@@ -140,7 +140,7 @@ const AdminPage = () => {
       <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
     
         <div className="bg-white shadow-lg rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">Répartition des groupes par niveau</h3>
+          <h3 className="text-xl font-semibold mb-4">Nombre groupes par niveau</h3>
           <Pie
             data={{
               labels: groupsByLevelChartData.map(item => item.level_name),
@@ -155,7 +155,7 @@ const AdminPage = () => {
               plugins: {
                 title: {
                   display: true,
-                  text: 'Répartition des groupes par niveau',
+                  text: 'Nombre des groupes par niveau',
                 },
                 tooltip: {
                   mode: 'index',
@@ -167,7 +167,7 @@ const AdminPage = () => {
 
 
  <div className="bg-white shadow-lg rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">Nombre d\'étudiants par groupe</h3>
+          <h3 className="text-xl font-semibold mb-4">Nombre d'étudiants par groupe</h3>
           <Bar
             data={{
               labels: studentsPerGroupChartData.map(item => item.group_name),
