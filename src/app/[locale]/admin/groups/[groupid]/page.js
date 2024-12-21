@@ -60,30 +60,42 @@ const GroupPage = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
     const groupName = group ? group.group_name : 'Group';
-  
+    const groupLevel = group ? group.level : 'Niveau';
+    const sessionName = group ? group.session_name : 'Session';
+    
+    // Afficher les informations du groupe en haut du PDF
+
+
+    doc.text(`${sessionName}`, 14, 10);
+    doc.text(`${groupLevel}`, 14, 15);
+    doc.text(`${groupName}`, 14, 20);
     const confirmedStudents = filteredStudents.filter(student => student.confirme);
-  
-    doc.text(`Liste des étudiants confirmés - ${groupName}`, 14, 10);
-  
+
+    // Ajouter le titre de la liste des étudiants
+    //doc.text(`Liste des étudiants confirmés - ${groupName}`, 14, 30);
+
     const tableData = confirmedStudents.map((student) => [
-      `${student.nom} ${student.prenom}`, 
-      student.matricule,
+    
+      student.matricule,  `${student.nom} ${student.prenom}`
     ]);
-  
+
     doc.autoTable({
-      head: [['Nom et Prénom', 'Matricule']],
+      head: [['Matricule','Nom et Prénom']],
       body: tableData,
-      startY: 20,
+      startY: 40,
     });
-  
-    doc.save(`${groupName}.pdf`);
+
+    const fileName = `${sessionName} - ${groupLevel} - ${groupName}.pdf`; 
+    doc.save(fileName);
   };
-  
+
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       {group ? (
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6">
           <h1 className="text-4xl font-bold text-center text-blue-700">{group.group_name}</h1>
+          <h2 className="text-lg text-center text-gray-500 mt-2"> {group.level}</h2>
+          <h2 className="text-lg text-center text-gray-500 mt-2"> {group.session_name}</h2>
           <h2 className="text-lg text-center text-gray-500 mt-2">Liste des étudiants</h2>
 
           <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-4 gap-4">
@@ -125,21 +137,22 @@ const GroupPage = () => {
             <table className="min-w-full table-auto mt-4">
               <thead>
                 <tr className="bg-gray-100">
+                <th className="px-4 py-2">Matricule</th>
                   <th className="px-4 py-2">Nom et Prénom</th>
-                  <th className="px-4 py-2">Matricule</th>
                   <th className="px-4 py-2">État d'inscription</th>
                 </tr>
               </thead>
               <tbody>
                 {currentStudents.map((student) => (
                   <tr key={student.matricule} className="border-b">
+                        <td className="px-4 py-2">{student.matricule}</td>
                    <td className="px-4 py-2">
   <Link href={`/${locale}/admin/students/${student.id}`} className="text-blue-600 hover:underline">
     {`${student.nom} ${student.prenom}`}
   </Link>
 </td>
 
-                    <td className="px-4 py-2">{student.matricule}</td>
+                
                     <td className="px-4 py-2">
                       {student.confirme ? 'Confirmé' : 'Non Confirmé'}
                     </td>
