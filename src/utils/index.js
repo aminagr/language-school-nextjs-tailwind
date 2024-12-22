@@ -39,8 +39,8 @@ export const fetchSessionsData = () => [
     session_name: 'Session Fevrier 2025',
     start_date: '2025-02-01',
     end_date: '2025-06-30',
-    registration_start_date: '2023-01-15',
-    registration_end_date: '2024-01-30',
+    registration_start_date: '2024-12-15',
+    registration_end_date: '2025-01-20',
   },
 ];
 
@@ -160,13 +160,13 @@ export const fetchStudentsData = () => {
     {
       id: 1,
       matricule: '12345',
-      nom: 'Dupont',
-      prenom: 'Jean',
+      nom: 'Diaz',
+      prenom: 'Amina',
       date_naissance: '1998-01-01',
       lieu_naissance: 'Alger',
       adresse: '10 rue de l\'Université, Alger',
       telephone: '0551234567',
-      mail: 'jean.dupont@example.com',
+      mail: 'amina.diaz@example.com',
       type: 'Externe'
     },
     {
@@ -444,20 +444,19 @@ export const getStudentsByGroupId = (groupId) => {
 };
 
 
-// src/utils/index.js
 
 export const fetchStudentById = (id) => {
-  // Récupération des données des étudiants
+
   const students = fetchStudentsData();
   const groups = fetchGroups();
   const sessions = fetchSessionsData();
   const levels = fetchLevelsData();
   const rooms = fetchRoomsData();
   
-  // Recherche de l'étudiant par son ID
+
   const student = students.find(student => student.id === id);
   
-  // Si l'étudiant existe, récupérer les autres informations associées
+  
   if (student) {
     const registrations = fetchRegistrations().filter(reg => reg.matricule === student.matricule);
     const studentGroups = registrations.map(reg => {

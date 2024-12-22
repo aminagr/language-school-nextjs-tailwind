@@ -16,17 +16,17 @@ const EditInfoModal = ({ onClose, studentData }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.lastName.trim()) newErrors.lastName = "Le nom est requis.";
-    if (!formData.firstName.trim()) newErrors.firstName = "Le prénom est requis.";
-    if (!formData.birthDate) newErrors.birthDate = "La date de naissance est requise.";
-    if (!formData.birthPlace.trim()) newErrors.birthPlace = "Le lieu de naissance est requis.";
-    if (!formData.address.trim()) newErrors.address = "L'adresse est requise.";
-    if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = "Le numéro de téléphone doit être valide (10 chiffres).";
-    if (!formData.userType) newErrors.userType = "Le type d'utilisateur est requis.";
-    if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Le format de l'email est invalide.";
+    if (!formData.nom.trim()) newErrors.nom = "Le nom est requis.";
+    if (!formData.prenom.trim()) newErrors.prenom = "Le prénom est requis.";
+    if (!formData.date_naissance) newErrors.date_naissance = "La date de naissance est requise.";
+    if (!formData.lieu_naissance.trim()) newErrors.lieu_naissance = "Le lieu de naissance est requis.";
+    if (!formData.adresse.trim()) newErrors.adresse = "L'adresse est requise.";
+    if (!/^\d{10}$/.test(formData.telephone)) newErrors.telephone = "Le numéro de téléphone doit être valide (10 chiffres).";
+    if (!formData.type) newErrors.type = "Le type d'utilisateur est requis.";
+    if (!formData.mail.trim()) {
+      newErrors.mail = "L'email est requis.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.mail)) {
+      newErrors.mail = "Le format de l'email est invalide.";
     }
     return newErrors;
   };
@@ -37,7 +37,7 @@ const EditInfoModal = ({ onClose, studentData }) => {
   };
 
   const handleRadioChange = (e) => {
-    setFormData({ ...formData, userType: e.target.value });
+    setFormData({ ...formData, type: e.target.value });
   };
 
   const handleSubmit = (e) => {
@@ -68,108 +68,102 @@ const EditInfoModal = ({ onClose, studentData }) => {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-
             <div className="flex items-center space-x-2">
               <FaUser className="text-gray-600" />
               <label className="w-1/3">Nom :</label>
               <input
                 type="text"
-                name="lastName"
-                value={formData.lastName}
+                name="nom"
+                value={formData.nom}
                 onChange={handleChange}
                 placeholder="Nom"
                 className="w-2/3 p-2 border rounded"
               />
             </div>
-            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+            {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
 
-           
             <div className="flex items-center space-x-2">
               <FaUser className="text-gray-600" />
               <label className="w-1/3">Prénom :</label>
               <input
                 type="text"
-                name="firstName"
-                value={formData.firstName}
+                name="prenom"
+                value={formData.prenom}
                 onChange={handleChange}
                 placeholder="Prénom"
                 className="w-2/3 p-2 border rounded"
               />
             </div>
-            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+            {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
 
-         
             <div className="flex items-center space-x-2">
               <FaEnvelope className="text-gray-600" />
               <label className="w-1/3">Email :</label>
               <input
                 type="email"
-                name="email"
-                value={formData.email}
+                name="mail"
+                value={formData.mail}
                 onChange={handleChange}
                 placeholder="Email"
                 className="w-2/3 p-2 border rounded"
               />
             </div>
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            {errors.mail && <p className="text-red-500 text-sm">{errors.mail}</p>}
 
             <div className="flex items-center space-x-2">
               <FaCalendarAlt className="text-gray-600" />
               <label className="w-1/3">Date de naissance :</label>
               <input
                 type="date"
-                name="birthDate"
-                value={formData.birthDate}
+                name="date_naissance"
+                value={formData.date_naissance}
                 onChange={handleChange}
                 className="w-2/3 p-2 border rounded"
               />
             </div>
-            {errors.birthDate && <p className="text-red-500 text-sm">{errors.birthDate}</p>}
+            {errors.date_naissance && <p className="text-red-500 text-sm">{errors.date_naissance}</p>}
 
-          
             <div className="flex items-center space-x-2">
               <FaMapMarkerAlt className="text-gray-600" />
               <label className="w-1/3">Lieu de naissance :</label>
               <input
                 type="text"
-                name="birthPlace"
-                value={formData.birthPlace}
+                name="lieu_naissance"
+                value={formData.lieu_naissance}
                 onChange={handleChange}
                 placeholder="Lieu de naissance"
                 className="w-2/3 p-2 border rounded"
               />
             </div>
-            {errors.birthPlace && <p className="text-red-500 text-sm">{errors.birthPlace}</p>}
+            {errors.lieu_naissance && <p className="text-red-500 text-sm">{errors.lieu_naissance}</p>}
 
             <div className="flex items-center space-x-2">
               <FaHome className="text-gray-600" />
               <label className="w-1/3">Adresse :</label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="adresse"
+                value={formData.adresse}
                 onChange={handleChange}
                 placeholder="Adresse"
                 className="w-2/3 p-2 border rounded"
               />
             </div>
-            {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+            {errors.adresse && <p className="text-red-500 text-sm">{errors.adresse}</p>}
 
-    
             <div className="flex items-center space-x-2">
               <FaPhone className="text-gray-600" />
               <label className="w-1/3">Téléphone :</label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
+                name="telephone"
+                value={formData.telephone}
                 onChange={handleChange}
                 placeholder="Téléphone"
                 className="w-2/3 p-2 border rounded"
               />
             </div>
-            {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
-
+            {errors.telephone && <p className="text-red-500 text-sm">{errors.telephone}</p>}
 
             <div className="flex items-center space-x-2">
               <FaUsers className="text-gray-600" />
@@ -178,19 +172,19 @@ const EditInfoModal = ({ onClose, studentData }) => {
                 <label className="flex items-center space-x-1">
                   <input
                     type="radio"
-                    name="userType"
-                    value="Étudiante"
-                    checked={formData.userType === "Étudiante"}
+                    name="type"
+                    value="Etudiant"
+                    checked={formData.type === "Etudiant"}
                     onChange={handleRadioChange}
                   />
-                  <span>Étudiante</span>
+                  <span>Étudiant</span>
                 </label>
                 <label className="flex items-center space-x-1">
                   <input
                     type="radio"
-                    name="userType"
+                    name="type"
                     value="Fonctionnaire"
-                    checked={formData.userType === "Fonctionnaire"}
+                    checked={formData.type === "Fonctionnaire"}
                     onChange={handleRadioChange}
                   />
                   <span>Fonctionnaire</span>
@@ -198,16 +192,16 @@ const EditInfoModal = ({ onClose, studentData }) => {
                 <label className="flex items-center space-x-1">
                   <input
                     type="radio"
-                    name="userType"
+                    name="type"
                     value="Externe"
-                    checked={formData.userType === "Externe"}
+                    checked={formData.type === "Externe"}
                     onChange={handleRadioChange}
                   />
                   <span>Externe</span>
                 </label>
               </div>
             </div>
-            {errors.userType && <p className="text-red-500 text-sm">{errors.userType}</p>}
+            {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
           </div>
 
           <div className="flex justify-center items-center">

@@ -95,15 +95,8 @@ const Sidebar = () => {
               <span className="text-lg">Sessions</span>
             </Link>
           </li>
-          <li>
-            <Link
-              href={`/${locale}/dashboard/notifications`}
-              className="flex items-center py-2 px-4 rounded-lg hover:bg-indigo-600 transition-all"
-            >
-              <FaBell className="mr-3 text-xl" />
-              <span className="text-lg">Notifications</span>
-            </Link>
-          </li>
+          
+          
         </ul>
 
         <div className="my-8 border-t border-gray-600"></div>

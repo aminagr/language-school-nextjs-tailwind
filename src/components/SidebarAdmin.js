@@ -85,7 +85,7 @@ const SidebarAdmin = () => {
           <Link
             href={`/${locale}/admin`}
             className="flex items-center text-3xl font-semibold text-white hover:bg-gray-700 p-2 rounded-lg"
-            onClick={handleLinkClick} // Ajouter cette ligne pour fermer la sidebar
+            onClick={handleLinkClick} 
           >
             <FaTachometerAlt className="mr-3" />
             Dashboard

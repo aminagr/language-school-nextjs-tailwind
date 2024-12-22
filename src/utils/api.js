@@ -29,7 +29,7 @@ export const getSessions = () => {
       address: "123, Rue de la Liberté, Alger, Algérie",
       email: "ramos.federico@example.com",
       phone: "0661234567",
-      userType: "Étudiant", 
+      userType: "Etudiant", 
       registeredSessions: [1, 2],
       notifications: [
         {

@@ -1,27 +1,43 @@
 "use client";
 
-import { getStudentData } from "@/utils/api";
+import { fetchStudentById } from "@/utils/index";  // Remplacer l'importation
 import { FaUserEdit, FaLock, FaUserAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EditInfoModal from "@/components/dashboard/EditInfoModal";
 import EditPasswordModal from "@/components/dashboard/EditPasswordModal";
 
 const MyAccount = () => {
-  const studentData = getStudentData();
+  const [studentData, setStudentData] = useState(null);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const getStudentData = async () => {
+      try {
+        const data = await fetchStudentById(1);  // Remplacer l'ID selon le besoin
+        setStudentData(data);
+      } catch (error) {
+        setError("Une erreur s'est produite lors du chargement des données.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getStudentData();
+  }, []);  // L'effet s'exécute une fois après le premier rendu
+
+  if (isLoading) {
+    return <div>Chargement...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col items-center py-12 px-6">
-      {/* Header */}
-      <div className="bg-indigo-600 text-white py-8 px-6 rounded-lg shadow-lg w-full max-w-4xl text-center">
-        <h1 className="text-4xl font-bold mb-2">
-          Bienvenue, {studentData.firstName}
-        </h1>
-       
-      </div>
-
-      {/* Profile Card */}
       <div className="bg-white shadow-lg rounded-lg mt-8 p-8 w-full max-w-4xl">
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-32 h-32 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg mb-6 md:mb-0 md:mr-6">
@@ -29,43 +45,42 @@ const MyAccount = () => {
           </div>
           <div className="text-center md:text-left">
             <h2 className="text-2xl font-bold text-gray-800">
-              {studentData.firstName} {studentData.lastName}
+              {studentData.prenom} {studentData.nom}
             </h2>
-            <p className="text-gray-500">{studentData.email}</p>
+            <p className="text-gray-500">{studentData.mail}</p>
           </div>
         </div>
 
-        {/* Info Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
-          <InfoItem label="Nom" value={studentData.lastName} />
-          <InfoItem label="Prénom" value={studentData.firstName} />
-          <InfoItem label="Date de naissance" value={studentData.birthDate} />
-          <InfoItem label="Lieu de naissance" value={studentData.birthPlace} />
-          <InfoItem label="Adresse" value={studentData.address} />
-          <InfoItem label="Téléphone" value={studentData.phone} />
-          <InfoItem label="Type d'utilisateur" value={studentData.userType} />
+          <InfoItem label="Nom" value={studentData.nom} />
+          <InfoItem label="Prénom" value={studentData.prenom} />
+          <InfoItem label="Date de naissance" value={studentData.date_naissance} />
+          <InfoItem label="Lieu de naissance" value={studentData.lieu_naissance} />
+          <InfoItem label="Adresse" value={studentData.adresse} />
+          <InfoItem label="Téléphone" value={studentData.telephone} />
+          <InfoItem label="Type d'utilisateur" value={studentData.type} />
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-center mt-8 space-x-4">
+        <div className="flex flex-col md:flex-row justify-center mt-8 gap-6 md:gap-8">
           <ActionButton
             label="Modifier les Infos"
             icon={FaUserEdit}
-            color="bg-indigo-500"
-            hoverColor="bg-indigo-600"
+            color="bg-indigo-600"
+            hoverColor="bg-indigo-700"
             onClick={() => setIsEditingInfo(true)}
+            className="w-full md:w-auto flex items-center justify-center py-3 px-6 rounded-lg text-white shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
           />
           <ActionButton
             label="Changer le mot de passe"
             icon={FaLock}
-            color="bg-red-500"
-            hoverColor="bg-red-600"
+            color="bg-red-600"
+            hoverColor="bg-red-700"
             onClick={() => setIsEditingPassword(true)}
+            className="w-full md:w-auto flex items-center justify-center py-3 px-6 rounded-lg text-white shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
           />
         </div>
       </div>
 
-      {/* Modals */}
       {isEditingInfo && (
         <EditInfoModal
           onClose={() => setIsEditingInfo(false)}
@@ -79,7 +94,6 @@ const MyAccount = () => {
   );
 };
 
-// Helper Component for Info
 const InfoItem = ({ label, value }) => (
   <div>
     <span className="text-sm text-gray-500">{label} :</span>
@@ -87,7 +101,6 @@ const InfoItem = ({ label, value }) => (
   </div>
 );
 
-// Helper Component for Buttons
 const ActionButton = ({ label, icon: Icon, color, hoverColor, onClick }) => (
   <button
     onClick={onClick}
