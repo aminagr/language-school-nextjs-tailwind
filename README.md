@@ -21,6 +21,12 @@ A modern, responsive website for a Russian language school built with **Next.js*
 ![image](https://github.com/user-attachments/assets/e4a4658e-5e8f-46d5-b344-8dcaca459383)
 ![image](https://github.com/user-attachments/assets/fbd143c5-3a6e-4b50-b6b6-8d465726703d)
 ![image](https://github.com/user-attachments/assets/9dccf1b1-eca3-4d9b-a5da-41d4991c9b0d)
+![image](https://github.com/user-attachments/assets/67f5c245-ac8c-46c5-ba96-b293c12230bc)
+![image](https://github.com/user-attachments/assets/a4824c13-3519-4c32-9670-9d5881166ea3)
+![image](https://github.com/user-attachments/assets/6312be37-2c48-45d5-987c-5ff06a24e12b)
+![image](https://github.com/user-attachments/assets/7d3538e0-63cf-490d-b8db-362c6bb3def4)
+![image](https://github.com/user-attachments/assets/eb1d5822-b57b-4aa7-bf94-f9a668f97e16)
+
 
 ## ⚙️ Setup Instructions
 
